@@ -11,7 +11,6 @@ Entity::Entity(glm::vec3 pos, glm::vec3 dimens) : pos(pos), dimensions(dimens)
 	rotYaw = 0;
 	rotRoll = 0;
 
-	pos = glm::vec3(0);
 	modScale = glm::vec3(1.0);
 
 
@@ -25,6 +24,7 @@ Entity::Entity(glm::vec3 pos, glm::vec3 dimens) : pos(pos), dimensions(dimens)
 
 	std::vector<glm::vec2> vertices;
 
+
 	vertices.push_back(bottomLeftVert);
 	vertices.push_back(topLeftVert);
 	vertices.push_back(bottomRightVert);
@@ -34,9 +34,8 @@ Entity::Entity(glm::vec3 pos, glm::vec3 dimens) : pos(pos), dimensions(dimens)
 	vertices.push_back(topLeftVert);
 
 
+
 	std::vector<glm::vec2> UVs;
-
-
 
 	glm::vec2 topLeftUV = glm::vec2(0.0f, 0.0f);
 	glm::vec2 botLeftUV = glm::vec2(0.0f, 1.0f);
@@ -56,8 +55,8 @@ Entity::Entity(glm::vec3 pos, glm::vec3 dimens) : pos(pos), dimensions(dimens)
 
 	//above is upside down
 	//below is for trying 0,0 as top left
-/*
-	vertices.push_back(topLeftVert);
+
+	/*vertices.push_back(topLeftVert);
 	vertices.push_back(bottomLeftVert);
 	vertices.push_back(bottomRightVert);
 

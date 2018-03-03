@@ -9,7 +9,6 @@
 #include <fstream>
 #include <vector>
 #include "ShaderProgram.h"
-#include "ObjLoader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "ResourceManager.h"

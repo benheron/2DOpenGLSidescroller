@@ -10,8 +10,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "ShaderProgram.h"
-#include "ObjLoader.h"
 
 class Platform
 {

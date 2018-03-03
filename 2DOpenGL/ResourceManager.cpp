@@ -13,7 +13,7 @@ ResourceManager::~ResourceManager()
 void ResourceManager::initResources()
 {
 	timg = new TextImageManager("res/fonts/fontarial.txt");
-	em = new EntityManager();
+
 
 }
 
@@ -22,11 +22,6 @@ TextImageManager* ResourceManager::getTextImageManager()
 	return timg;
 }
 
-
-EntityManager* ResourceManager::getEntityManager()
-{
-	return em;
-}
 
 
 

@@ -25,7 +25,9 @@ void GameState::update(float dt)
 
 void GameState::load()
 {
-	Entity* e1 = new Entity();
+
+	glm::vec3 entPos = glm::vec3(0, 0, 0);
+	Entity* e1 = new Entity(entPos);
 	Texture* t1 = new Texture();
 	t1->loadTexture("res/img/box.png");
 	e1->setTexture(t1);
