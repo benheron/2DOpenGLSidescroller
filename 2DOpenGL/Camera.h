@@ -1,26 +1,27 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 class Camera
 {
 public:
-	Camera(glm::vec3 p, glm::vec3 lookAtPos, glm::vec3 upVector);
+	Camera();
 	~Camera();
 
 	void setPosition(glm::vec3 p, bool add);
 	glm::vec3 getPosition();
 
-	void setLookAtPos(glm::vec3 p, bool add);
-	glm::vec3 getLookAtPos();
+	glm::mat4 getCamMatrix() { return camMatrix; }
 
-	void setUpVector(glm::vec3 p, bool add);
-	glm::vec3 getUpVector();
+	void update(float dt);
 
 
 private:
-	glm::vec3 position;
-	glm::vec3 lookAtPos;
-	glm::vec3 upVector;
+	glm::vec3 pos;
+
+	glm::mat4 baseMat;
+	glm::mat4 camMatrix;
+	
 
 
 };

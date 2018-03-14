@@ -17,7 +17,8 @@ public:
 	Text(glm::vec3 pos, std::string fontName, int fontSize, std::string theText, TextImageManager *timng);
 	~Text();
 
-
+	char operator[](const std::size_t position)
+	{ return theText[position];	}
 
 	void update(float dt);
 
@@ -43,6 +44,7 @@ public:
 protected:
 	void writeText();
 
+	///The test itself in string value
 	std::string theText;
 	std::string fontName;
 	int fontSize;
@@ -50,6 +52,7 @@ protected:
 
 	int spacing;
 
+	///The Text using text characters
 	std::vector<TextCharacter*> textString;
 
 

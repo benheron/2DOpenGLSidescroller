@@ -24,6 +24,8 @@ public:
 
 	void render(std::vector<State*> states);
 
+	void renderFrameRate(Text* frameRateText);
+
 
 protected:
 
@@ -37,5 +39,11 @@ protected:
 	ShaderProgram shaderProg;
 
 	GLuint textureID;
+	GLuint mvpID;
 
+//	GLuint lastTextID = 9999;
+
+	//debug
+	ShaderProgram txtShader;
+	GLuint Text2DUniformID;
 };

@@ -41,7 +41,7 @@ void Text::writeText()
 		tc = new TextCharacter(newPosVec, tct->getTextCharacterDimensions() /*/ 32 * fontSize*/, tct);
 		textString.push_back(tc);
 
-		dimensions += tct->getTextCharacterDimensions() /*/ 32 * fontSize*/;
+		dimens += tct->getTextCharacterDimensions() /*/ 32 * fontSize*/;
 
 		std::vector<glm::vec2> v = tc->getTextCharacterVertices();
 		std::vector<glm::vec2> u = tc->getTextCharacterUVs();
@@ -110,18 +110,18 @@ void Text::setAlign(Align a)
 			for (int i = 0; i < textString.size(); i++)
 			{
 				glm::vec3 ts = textString[i]->getPosition();
-				ts.x += dimensions.x / 2;
+				ts.x += dimens.x / 2;
 
 				textString[i]->setPosition(ts);
 			}
 
 		}
 		else if (alignment == centreAlign) {
-			pos.x = origPos.x - dimensions.x / 2;
+			pos.x = origPos.x - dimens.x / 2;
 			for (int i = 0; i < textString.size(); i++)
 			{
 				glm::vec3 ts = textString[i]->getPosition();
-				ts.x -= dimensions.x / 2;
+				ts.x -= dimens.x / 2;
 
 				textString[i]->setPosition(ts);
 			}
@@ -184,7 +184,7 @@ void Text::changeTextStart(std::string s)
 			textString.insert(textString.begin(), tc);
 			theText.insert(0, id);
 
-			dimensions += tct->getTextCharacterDimensions() /*/ 32 * fontSize*/;
+			dimens += tct->getTextCharacterDimensions() /*/ 32 * fontSize*/;
 		}
 	}
 	else {

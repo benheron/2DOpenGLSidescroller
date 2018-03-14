@@ -4,6 +4,8 @@
 #include "../text/Text.h"
 #include "../Camera.h"
 #include "../Collision.h"
+#include "../levelManagement/MapRoom.h"
+#include "../levelManagement/Tile.h"
 
 class GameOverState;
 
@@ -48,5 +50,10 @@ protected:
 
 
 	ResourceManager* rm;
+
+	KeyboardManager*km;
+
+
+	Entity* e1;
 	
 };

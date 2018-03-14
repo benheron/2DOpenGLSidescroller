@@ -10,6 +10,10 @@ public:
 
 	Model(std::vector<glm::vec2> vertices2D, std::vector<glm::vec2> UVs);
 	Model(std::vector<glm::vec2> vertices2D);
+
+	Model(std::vector < glm::vec3> vertices, std::vector<glm::vec2> UVs);
+
+	Model(std::vector < glm::vec3> vertices);
 	~Model();
 
 
@@ -39,6 +43,8 @@ public:
 
 	GLuint getIndexBuffer();
 	GLuint getVertexBuffer2D();
+
+	void changeVertex2DBuffer(int startIndex, std::vector<glm::vec2> nVerts);
 
 	void changeUVBUffer(int startIndex, std::vector<glm::vec2> nUVs);
 

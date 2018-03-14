@@ -7,6 +7,17 @@
 
 #pragma once
 
+
+struct TextModMat
+{
+	Model* m;
+	Texture* t;
+	glm::mat4 matrix;
+};
+
+
+
+
 class StateManager;
 
 /**
@@ -76,6 +87,8 @@ public:
 	Camera* getCamera();
 
 
+	std::vector<TextModMat*> getTMC();
+
 
 
 
@@ -111,4 +124,9 @@ protected:
 	std::vector<Entity*> entities;
 	std::vector<Text*> stateText;
 	Camera *camera;
+
+
+
+
+	std::vector<TextModMat*>  tmc;
 };

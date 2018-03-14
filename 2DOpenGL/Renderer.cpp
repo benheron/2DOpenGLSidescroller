@@ -8,11 +8,11 @@ Renderer::Renderer(Platform* platform, ResourceManager * rm) : platform(platform
 		glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
 
 		// Enable depth test
-		glEnable(GL_DEPTH_TEST);
-		// Accept fragment if it closer to the camera than the former one
-		glDepthFunc(GL_LESS);
+		glDisable(GL_DEPTH_TEST);
 
+		
 
+		mvpID = glGetUniformLocation(shaderProg.getProgramID(), "mvp");
 
 
 
@@ -23,13 +23,16 @@ Renderer::Renderer(Platform* platform, ResourceManager * rm) : platform(platform
 		glGenVertexArrays(1, &VertexArrayID);
 		glBindVertexArray(VertexArrayID);
 
-		glEnable(GL_CULL_FACE);
+		
 
 		textureID = glGetUniformLocation(shaderProg.getProgramID(), "textureSampler");
 
 	}
 	
-
+	if (txtShader.loadProgram("Shaders/TextVertShader.vert", "Shaders/TextFragShader.frag"))
+	{
+		Text2DUniformID = glGetUniformLocation(txtShader.getProgramID(), "myTextureSampler");
+	}
 
 }
 
@@ -55,110 +58,77 @@ void Renderer::render(std::vector<State*> states)
 
 		std::vector<Entity*> entities = states[j]->getRenderables();
 
-		glm::mat4 projMat = glm::ortho(0.0f, platform->getWindowSize().x, platform->getWindowSize().y, 0.0f);
+		glm::mat4 projMat = glm::ortho(0.0f, platform->getWindowSize().x, platform->getWindowSize().y, 0.0f, 1.0f, -1.0f);
 
-		glm::mat4 viewMat = glm::mat4(1);
+		glm::mat4 viewMat = states[j]->getCamera()->getCamMatrix();
 			
 			
 
 
-		
-	/*
-		for (int i = 0; i < entities.size(); i++)
-		{
-			//get model matrix for this specific model
-			glm::mat4 modelMat = entities[i]->getModelMatrix();
-			//new mvp
-			glm::mat4 mvp = projMat * viewMat * modelMat;
-
-			Model* m = entities[i]->getModel();
-			//vertices buffer
-			GLuint vertexBuffer = m->getVertexBuffer();
-
-			//normal buffer
-			GLuint uvBuffer = m->getUVBuffer();
-
-
-			
-
-			GLsizei indexSize = m->getVertices2D().size();
 	
-			// Bind our texture in Texture Unit 0
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, entities[i]->getTexture()->getTextureID());
-			// Set our "myTextureSampler" sampler to use Texture Unit 0
-			glUniform1i(textureID, 0);
-
-
-
-			//enable vertex position
-			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-
-			glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-			// Draw call
-			glDrawArrays(GL_TRIANGLES, 0, indexSize);
-
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
-
-			glDisable(GL_BLEND);
-		}*/
-
 		for (int i = 0; i < entities.size(); i++)
 		{
-			Model* m = entities[i]->getModel();
-			//vertices buffer
-			GLuint vertexBuffer = m->getVertexBuffer2D();
+			std::vector<Model*> ms = entities[i]->getModels();
 
-			//normal buffer
-			GLuint uvBuffer = m->getUVBuffer();
+			glm::mat4 modelMat = entities[i]->getModelMatrix();
+
+			for (int k = 0; k < ms.size(); k++)
+			{
+				
+
+				glm::mat4 mvp = projMat*viewMat*modelMat;
+
+				glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
 
 
-			GLsizei indexSize = m->getVertices2D().size();
+				//vertices buffer
+				GLuint vertexBuffer = ms[k]->getVertexBuffer2D();
 
-			GLuint tID = entities[i]->getTexture()->getTextureID();
+				//normal buffer
+				GLuint uvBuffer = ms[k]->getUVBuffer();
 
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, tID);
-			// Set our "myTextureSampler" sampler to use Texture Unit 0
-			glUniform1i(textureID, 0);
 
-			// 1rst attribute buffer : vertices
-			glEnableVertexAttribArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+				GLsizei indexSize = ms[k]->getVertices2D().size();
 
-			// 2nd attribute buffer : UVs
-			glEnableVertexAttribArray(1);
-			glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+				GLuint tID = entities[i]->getTexture(k)->getTextureID();
 
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, tID);
 
-			// Draw call
-			glDrawArrays(GL_TRIANGLES, 0, indexSize);
+				glUniform1i(textureID, 0);
 
-			glDisable(GL_BLEND);
+				//lastTextID = tID;
+				
+
+
+
+
+
+
+				glEnableVertexAttribArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+				glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+
+				glEnableVertexAttribArray(1);
+				glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+				// Draw call
+				glDrawArrays(GL_TRIANGLES, 0, indexSize);
+
+				glDisable(GL_BLEND);
+
+				//disable vertex position
+				glDisableVertexAttribArray(0);
+				glDisableVertexAttribArray(1);
+			}
+			
 		}
-
-
-
-
-
-
-
-
-
-
 
 
 	}
@@ -166,9 +136,7 @@ void Renderer::render(std::vector<State*> states)
 
 
 
-	//disable vertex position
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+
 
 
 
@@ -179,4 +147,50 @@ void Renderer::render(std::vector<State*> states)
 
 
 
+}
+
+void Renderer::renderFrameRate(Text* frameRateText)
+{
+	GLuint txtProgramId = txtShader.getProgramID();
+
+	glUseProgram(txtProgramId);
+
+	
+	Model* m = frameRateText->getModel();
+	//vertices buffer
+	GLuint vertexBuffer = m->getVertexBuffer2D();
+
+	//normal buffer
+	GLuint uvBuffer = m->getUVBuffer();
+
+
+	GLsizei indexSize = m->getVertices2D().size();
+
+	GLuint fontID = frameRateText->getFontTexture()->getTextureID();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, fontID);
+	// Set our "myTextureSampler" sampler to use Texture Unit 0
+	glUniform1i(Text2DUniformID, 0);
+
+	// 1rst attribute buffer : vertices
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	// 2nd attribute buffer : UVs
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// Draw call
+	glDrawArrays(GL_TRIANGLES, 0, indexSize);
+
+	glDisable(GL_BLEND);
+
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 }

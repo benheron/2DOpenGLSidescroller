@@ -3,9 +3,7 @@
 State::State(StateManager* stateManager, Platform* platform)
 	:stateManager(stateManager), platform(platform), active(false)
 {
-	camera = new Camera(glm::vec3(0, 0, 0),
-		glm::vec3(0, 0, 0),
-		glm::vec3(0, 1, 0));
+	camera = new Camera();
 	loaded = false;
 }
 
@@ -42,4 +40,10 @@ std::vector<Text*> State::getStateText()
 Camera *State::getCamera()
 {
 	return camera;
+}
+
+
+std::vector<TextModMat*> State::getTMC()
+{
+	return tmc;
 }

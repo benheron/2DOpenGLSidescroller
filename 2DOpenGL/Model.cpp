@@ -29,6 +29,30 @@ Model::Model(std::vector<glm::vec3> vertices, std::vector<glm::vec2> UVs, std::v
 
 }
 
+
+//3D vert + uv
+Model::Model(std::vector<glm::vec3> vertices, std::vector<glm::vec2> UVs) :
+	vertices(vertices), UVs(UVs)
+{
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &uvBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+	glBufferData(GL_ARRAY_BUFFER, UVs.size() * sizeof(glm::vec2), &UVs[0], GL_DYNAMIC_DRAW);
+}
+
+//3D just vert
+Model::Model(std::vector<glm::vec3> vertices) :
+	vertices(vertices)
+{
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+}
+
+//2d vert + uv
 Model::Model(std::vector<glm::vec2> vertices2D, std::vector<glm::vec2> UVs) :
 	vertices2D(vertices2D), UVs(UVs)
 {
@@ -51,10 +75,32 @@ Model::Model(std::vector<glm::vec2> vertices2D) :
 
 Model::~Model()
 {
-	glDeleteBuffers(1, &normalBuffer);
-	glDeleteBuffers(1, &vertexBuffer);
-	glDeleteBuffers(1, &uvBuffer);
-	glDeleteBuffers(1, &indexBuffer);
+	if (normalBuffer != NULL)
+	{
+		glDeleteBuffers(1, &normalBuffer);
+	}
+	
+	if (indexBuffer)
+	{
+		glDeleteBuffers(1, &indexBuffer);
+	}
+
+	if (vertexBuffer)
+	{
+		glDeleteBuffers(1, &vertexBuffer);
+	}
+	
+	if (uvBuffer)
+	{
+		glDeleteBuffers(1, &uvBuffer);
+	}
+
+	if (vertexBuffer2D)
+	{
+		glDeleteBuffers(1, &vertexBuffer2D);
+	}
+	
+
 }
 
 std::vector<glm::vec3> Model::getVertices()
@@ -130,43 +176,24 @@ GLuint Model::getVertexBuffer2D()
 	return vertexBuffer2D;
 }
 
-void Model::changeUVBUffer(int startIndex, std::vector<glm::vec2> nUVs)
+void Model::changeVertex2DBuffer(int startIndex, std::vector<glm::vec2> nVerts)
 {
-
-
-	//glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
-
-	/*
-	glBufferSubData(GL_ARRAY_BUFFER,
-		startIndex * sizeof(glm::vec2),
-		nUVs.size() * sizeof(glm::vec2),
-		&nUVs);*/
-
 	std::vector<glm::vec2> bufferContents;
 
+	glNamedBufferSubData(vertexBuffer2D,
+		startIndex * sizeof(glm::vec2),
+		nVerts.size() * sizeof(glm::vec2),
+		&nVerts[0]);
+}
 
-
-
-	/*GLfloat feedback[84];
-
-	glGetBufferSubData(GL_ARRAY_BUFFER, NULL, UVs.size() * sizeof(glm::vec2), feedback);*/
-
-	
-	//glGetNamedBufferSubData(uvBuffer, NULL, UVs.size() * sizeof(glm::vec2), &bufferContents);
-
+void Model::changeUVBUffer(int startIndex, std::vector<glm::vec2> nUVs)
+{
+	std::vector<glm::vec2> bufferContents;
 
 	glNamedBufferSubData(uvBuffer,
 		startIndex * sizeof(glm::vec2),
 		nUVs.size() * sizeof(glm::vec2),
 		&nUVs[0]);
-
-
-
-	/*GLfloat feedback2[84];
-	glGetBufferSubData(GL_ARRAY_BUFFER, NULL, UVs.size() * sizeof(glm::vec2), feedback2);
-*/
-	
-
 
 }
 

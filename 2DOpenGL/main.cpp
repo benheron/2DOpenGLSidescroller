@@ -139,6 +139,8 @@ int main( int argc, char* args[] )
 	int x = 0, y = 0;
 	SDL_GetMouseState(&x, &y);
 
+	Text *fr = new Text(glm::vec3(10.f, 550.f, 0), "arial", 32, "000000000000", rm->getTextImageManager());
+
 
 	unsigned int lastTime = SDL_GetTicks();
 
@@ -150,14 +152,35 @@ int main( int argc, char* args[] )
 	{
 
 		unsigned int current = SDL_GetTicks();
+		
+
+		float msbf = current - lastTime;
+		
+
 		float dt = (float)(current - lastTime) / 1000.0f;
 		lastTime = current;
+
+		
+
+
+		
 
 
 		if (dt > 0.050)
 		{
 			dt = 0.050;
 		}
+
+		int frames = 1 / dt;
+
+		if (frames > 0)
+		{
+			std::string str = std::to_string(frames);
+			fr->changeTextEnd(str);
+		}
+	
+
+		//printf("%i ms/frame\n", int(frames));
 
 		//Handle events on queue
 		while( SDL_PollEvent( &e ))
@@ -182,6 +205,7 @@ int main( int argc, char* args[] )
 
 
 		renderer->render(stateManager->getStates());
+		//renderer->renderFrameRate(fr);
 			
 		//Update screen
 		SDL_GL_SwapWindow( platform->getWindow() );

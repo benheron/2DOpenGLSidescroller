@@ -7,36 +7,73 @@
 
 class Entity {
 public:
-	Entity(glm::vec3 pos = glm::vec3(0), glm::vec3 dimens = glm::vec3(0));
-	~Entity();
 
-	void update(float dt);
+	/**
+	@brief Entity constructor with texture, position, dimensions and the uvsize of an individual element
+	*/
+
+	Entity(Texture* entTexture, glm::vec3 pos = glm::vec3(0), glm::vec3 dimens = glm::vec3(0), glm::vec2 uvSize = glm::vec2(0));
+
+	/**
+	@brief Entity constructor with  position, dimensions, uvsize of an individual element and whether or not it is a container
+	*/
+	Entity(glm::vec3 pos = glm::vec3(0), glm::vec3 dimens = glm::vec3(0), glm::vec2 uvSize = glm::vec2(0), glm::vec3 offPos = glm::vec3(0), bool container = false);
+
+
+
+	virtual ~Entity();
+
+	void init();
+
+	virtual void update(float dt);
+
+	void updateModelMatrix();
+
+
+
 
 	void setModel(Model *m);
 
+	Model* getModel();
+
+	std::vector<Model*> getModels() { return entModels; }
+
 	void setPosition(glm::vec3 p, bool add = false);
+
+	GLuint getTextureUVBuffer();
+
+	virtual glm::vec2 getTextureUVOffset();
+
+
 	glm::vec3 getPosition();
+
+	glm::vec3 getCentrePosition();
 
 	glm::vec3 getDimensions();
 
-//	void setRotation(glm::vec3 rot, glm::vec3 axis);
 
 	void setTexture(Texture* t);
-	Texture* getTexture();
+	virtual Texture* getTexture();
+
+	Texture* getTexture(int index) { return entTextures[index]; }
+
+	virtual std::vector<Texture*> getTextures() { return entTextures; }
 	
-	//x
+	///rotate across x axis
 	void setYaw(float rot, bool add);
-	//y
+	///rotate across y axis
 	void setPitch(float rot, bool add);
-	//z
+	///rotate across z axis
 	void setRoll(float rot, bool add);
 
 	float getRoll();
 
 
+	
+
 	void setScale(glm::vec3 s);
 
-	Model* getModel();
+
 
 	glm::mat4 getModelMatrix();
 
@@ -47,17 +84,37 @@ public:
 
 	void moveBackward(float dt);
 
+
+	std::vector<glm::vec2> getEntityVertices() { return vertices; }
+	virtual std::vector<glm::vec2> getEntityUVs() { return UVs; }
+
+
+
+
 	BoundingBox *getBoundingBox();
 
 	//hacky player code
 	void moveRight(float dt);
 	void moveLeft(float dt);
 
+	void moveDown(float dt);
+	void moveUp(float dt);
+
 	
 
 
 protected:
+
+	void setQuadVertices(std::vector<glm::vec2> &vertices);
+	void setQuadUVs(std::vector<glm::vec2> &UVs);
+
+
+
+
 	bool modelMatChanged;
+
+	std::vector<Model*> entModels;
+	std::vector<Texture*> entTextures;
 
 	Model *model;
 	glm::mat4 modelMatrix;
@@ -71,23 +128,28 @@ protected:
 	//z-axis
 	float rotRoll;
 
+
+	bool container;
+
 	float speed;
 
+	///position of the entity
 	glm::vec3 pos;
-	Texture *modTexture;
 
-	glm::vec3 forwardVec;
-	glm::vec3 upVec;
-	glm::vec3 rightVec;
+	///the offset of position - half width and height
+	glm::vec3 offsetPos;
 
-	glm::vec3 dimensions;
+
+	Texture * entTexture;
+
+	glm::vec3 dimens;
 	
 	BoundingBox *bb;
 
-	glm::vec3 bbAllowance;
+
+	glm::vec2 uvSize;
 
 
-	bool moving;
-
-	bool tilting;
+	std::vector<glm::vec2> UVs;
+	std::vector<glm::vec2> vertices;
 };
