@@ -5,7 +5,7 @@ MapRoom::MapRoom()
 	
 }
 
-MapRoom::MapRoom(MapManager *mpmng, TileTypeManager *ttmng, std::string id) : Entity(glm::vec3(0), glm::vec3(0), glm::vec2(0), ttmng->getTileTypeSize() / 2.f, true)
+MapRoom::MapRoom(MapManager *mpmng, TileTypeManager *ttmng, std::string id) : Entity(glm::vec3(0), glm::vec3(0), glm::vec2(0), glm::vec3(0) /*ttmng->getTileTypeSize() / 2.f*/, true)
 {
 
 
@@ -18,9 +18,10 @@ MapRoom::MapRoom(MapManager *mpmng, TileTypeManager *ttmng, std::string id) : En
 	roomTilesStrings = rt->getRoomTileData();
 
 
-	exists = true;
+//	exists = true;
 
-	
+	//explicit tile size
+	tileSize = glm::vec2(32, 32);
 
 	createRoom(mpmng, ttmng);
 }
@@ -109,15 +110,23 @@ void MapRoom::createRoom(MapManager *mpmng, TileTypeManager *ttmng)
 					//Get the tile
 					std::string tileID = roomTilesStrings[layerID][y][x];
 
+					
+					//Get the data to load into the new tile
+					TileType* tileType = ttmng->getTileType(tileID);
+
+					Tile *t = new Tile(glm::vec3((x * tileSize.x), (y * tileSize.y), 0), glm::vec3(tileSize.x, tileSize.y, 0), tileType);
+
+					if (tileID == "XX")
+					{
+						t->setShouldRender(false);
+					}
+
 					if (tileID != "XX")
 					{
-						//Get the data to load into the new tile
-						TileType* tileType = ttmng->getTileType(tileID);
-
-						Tile *t = new Tile(glm::vec3((x * 32), (y * 32), 0), glm::vec3(32, 32, 0), tileType);
-
+						//get vertices and uvs from tile
 						std::vector<glm::vec2> v = t->getEntityVertices();
 						std::vector<glm::vec2> u = t->getEntityUVs();
+
 
 						verts.insert(std::end(verts), std::begin(v), std::end(v));
 						us.insert(std::end(us), std::begin(u), std::end(u));
@@ -136,9 +145,10 @@ void MapRoom::createRoom(MapManager *mpmng, TileTypeManager *ttmng)
 						{
 							t->setSideU(true);
 						}
-
-						roomTiles[layerID][y].push_back(t);
 					}
+
+					roomTiles[layerID][y].push_back(t);
+					
 				}
 			}
 
@@ -160,9 +170,6 @@ void MapRoom::createRoom(MapManager *mpmng, TileTypeManager *ttmng)
 
 	
 	
-	//player = new Character(playerSpawn, cmng->getCharacterType("G1"));
-
-	//player->setGravityOn(true);
 
 }
 
@@ -237,39 +244,55 @@ void MapRoom::labelTileSides()
 	}
 }
 
-
-
-/*
-void MapRoom::update(float dt)
+bool MapRoom::collideWithTile(Entity* e)
 {
+	glm::vec3 entPos = e->getPosition();
+	glm::vec3 entPosDim = entPos + e->getDimensions();
+
+	int minTileX = floor(entPos.x / tileSize.x);
+	int minTileY = floor(entPos.y / tileSize.y);
+
+
+	int maxTileX = floor(entPosDim.x / tileSize.x);
+	int maxTileY = floor(entPosDim.y / tileSize.y);
+
+	int xLimit = roomTiles["O"].size() - 1;
+	int yLimit = roomTiles["O"][0].size() - 1;
+
+	e->setBlendColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+	glm::vec4 blendCol = glm::vec4(1.0f, .0f, .0f, 1.0f);
 	
-	
+
+	for (int i = minTileY - 2; i < maxTileY + 2; i++)
+	{
+		for (int j = minTileX - 2; j < maxTileX + 2; j++)
+		{
+			if (i > -1 && i < yLimit &&
+				j > -1 && j < xLimit)
+			{
+				Tile* curTile = roomTiles["O"][i][j];
+				if (!curTile->haveBlankID())
+				{
+					//if (Collision::boxBoxCollision(e->getBoundingBox(), curTile->getBoundingBox()))
+					if (Collision::SATIntersection(e->getBoundingBox(), curTile->getBoundingBox()))
+					{
+						e->setBlendColour(blendCol);
+						curTile->setBlendColour(blendCol);
+
+						
+					}
+					
+				}
+			}
+		}
+	}
+
+
+	return true;
 }
-*/
 
 
-
-void MapRoom::setPos(glm::vec2 pos)
-{
-	roomPos = pos;
-}
-
-glm::vec2 MapRoom::getPos()
-{
-	return roomPos;
-}
-
-
-
-void MapRoom::setExists(bool e)
-{
-	exists = e;
-}
-
-bool MapRoom::getExists()
-{
-	return exists;
-}
 
 std::vector<Entity*> MapRoom::getTilesEntities(std::string layer)
 {

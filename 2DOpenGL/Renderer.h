@@ -38,6 +38,7 @@ protected:
 
 	ShaderProgram shaderProg;
 
+	GLuint blendColourID;
 	GLuint textureID;
 	GLuint mvpID;
 

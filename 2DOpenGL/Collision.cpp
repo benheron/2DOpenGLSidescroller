@@ -11,24 +11,17 @@ bool Collision::boxBoxCollision(BoundingBox *a, BoundingBox* b)
 	if (aMax.x > bMin.x &&
 		aMin.x < bMax.x &&
 		aMax.y > bMin.y &&
-		aMin.y < bMax.y &&
-		aMax.z > bMin.z &&
-		aMin.z < bMax.z)
+		aMin.y < bMax.y )
 	{
 
 		return true;
 	}
 
 	return false;
-
-
-
-	/*return (aMin.x <= bMax.x && aMax.x >= bMin.x) &&
-		(aMin.y <= bMax.y && aMax.y >= bMin.y) &&
-		(aMin.z <= bMax.z && aMax.z >= bMin.z);*/
 }
 
 //find shortest distance between two intervals
+/*
 float Collision::compareIntervals(Interval i1, Interval i2)
 {
 	glm::vec3 vecChoice;
@@ -51,7 +44,7 @@ float Collision::compareIntervals(Interval i1, Interval i2)
 
 	return sq;
 
-/*
+/ *
 	//quick checks
 	if (i2.minVal > i1.maxVal ||
 		i1.minVal > i2.maxVal)
@@ -68,24 +61,24 @@ float Collision::compareIntervals(Interval i1, Interval i2)
 
 	}
 
-*/
+* /
 
 	
 
 
 	
-}
+}*/
 
 
 
 bool Collision::SATIntersection(BoundingBox *a, BoundingBox* b)
 {
-	float min1, max1, min2, max2;
+	
 
-	/*for (int i = 0; i < a->getNumFaces(); i++)
+	for (int i = 0; i < a->getNumEdges(); i++)
 	{
 
-		glm::vec3 n = a->getEdge(i)-
+		glm::vec3 n = a->getEdge(i).normal;
 		Interval ia = a->getInterval(n);
 		Interval ib = b->getInterval(n);
 
@@ -98,10 +91,10 @@ bool Collision::SATIntersection(BoundingBox *a, BoundingBox* b)
 
 
 
-	for (int i = 0; i < b->getNumFaces(); i++)
+	for (int i = 0; i < b->getNumEdges(); i++)
 	{
 
-		glm::vec3 n = b->getFace(i)->getNormal();
+		glm::vec3 n = b->getEdge(i).normal;
 		Interval ia = a->getInterval(n);
 		Interval ib = b->getInterval(n);
 
@@ -110,7 +103,7 @@ bool Collision::SATIntersection(BoundingBox *a, BoundingBox* b)
 		{
 			return false;
 		}
-	}*/
+	}
 
 	return true;
 }

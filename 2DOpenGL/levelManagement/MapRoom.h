@@ -53,33 +53,18 @@ public:
 	void labelTileSides();
 
 
+	bool collideWithTile(Entity* e);
 
-	/**
-	@brief
-	*/
-	void setPos(glm::vec2 pos);
 
-	/**
-	@brief
-	*/
-	glm::vec2 getPos();
 
 	
 	/**
-	@brief
+	@brief Get tile object at position xy
+	@returns Tile object at position xy
 	*/
 	Tile* getTile(glm::vec2 xy);
 
-	/**
-	@brief
-	*/
-	bool getExists();
-
-
-	/**
-	@brief
-	*/
-	void setExists(bool e);
+	
 
 
 	void changeTileType(std::string layer, glm::vec2 tilePos, std::string tileID, TileTypeManager *ttmng);
@@ -124,7 +109,6 @@ private:
 
 	glm::vec2 mapPos;
 
-	bool exists = false;
 
 	int change = 0;
 	TileTypeManager *ttm;
@@ -133,7 +117,7 @@ private:
 	bool levelComplete = false;
 
 
-
+	glm::vec2 tileSize;
 
 
 	TextModMat* tmm;

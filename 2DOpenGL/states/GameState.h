@@ -49,6 +49,8 @@ protected:
 	Entity *player;
 
 
+	MapRoom *mn;
+
 	ResourceManager* rm;
 
 	KeyboardManager*km;

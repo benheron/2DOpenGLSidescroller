@@ -47,6 +47,7 @@ void Entity::init()
 	rotMatrix = glm::mat4(1.0);
 
 	modelMatrix = glm::mat4(1.0);
+	bbMatrix = glm::mat4(1.0);
 
 	rotPitch = 0;
 	rotYaw = 0;
@@ -56,6 +57,8 @@ void Entity::init()
 
 
 	speed = 150;
+
+	blendColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
 	setQuadVertices(vertices);
@@ -80,6 +83,8 @@ void Entity::init()
 	}
 	
 
+	bb = new BoundingBox(pos- offsetPos, pos -offsetPos+dimens);
+
 	updateModelMatrix();
 
 }
@@ -94,7 +99,7 @@ void Entity::update(float dt)
 
 	updateModelMatrix();
 
-	//bb->transformByMat4(modelMatrix);
+	bb->transformByMat4(bbMatrix);
 	
 
 }
@@ -106,7 +111,7 @@ void Entity::updateModelMatrix()
 
 	glm::mat4 mm = glm::mat4(1.0);
 
-	glm::vec3 jointPos = pos + offsetPos;// +glm::vec3(0.5, 0.5, 0);
+	glm::vec3 jointPos = pos;// +offsetPos;
 
 	//glm::vec3 nPos = glm::vec3((int)jointPos.x, (int)jointPos.y, (int)jointPos.z);
 
@@ -115,7 +120,31 @@ void Entity::updateModelMatrix()
 	
 
 	//translate to new position
-	mm = glm::translate(mm, nPos);
+	//use joint position as this is for rendering
+	mm = glm::translate(mm, pos - offsetPos);
+
+	//rotate x
+	mm = glm::rotate(mm, rotPitch, glm::vec3(1, 0, 0));
+	//rotate y
+	mm = glm::rotate(mm, rotYaw, glm::vec3(0, 1, 0));
+	//rotate z
+	mm = glm::rotate(mm, rotRoll, glm::vec3(0, 0, 1));
+
+	//scale
+	mm = glm::scale(mm, modScale);
+
+	
+	modelMatrix = mm;
+
+	updateBoundingBoxMatrix();
+}
+
+void Entity::updateBoundingBoxMatrix()
+{
+	glm::mat4 mm = glm::mat4(1.0);
+
+	//translate to new position
+	mm = glm::translate(mm, pos - offsetPos);
 
 	//rotate x
 	mm = glm::rotate(mm, rotPitch, glm::vec3(1, 0, 0));
@@ -128,7 +157,9 @@ void Entity::updateModelMatrix()
 	mm = glm::scale(mm, modScale);
 
 
-	modelMatrix = mm;
+
+
+	bbMatrix = mm;
 }
 
 
@@ -137,7 +168,7 @@ void Entity::updateModelMatrix()
 void Entity::setQuadVertices(std::vector<glm::vec2> &vertices)
 {
 	
-
+	//make sure to have centred
 	glm::vec3 startPos = pos - offsetPos;
 
 

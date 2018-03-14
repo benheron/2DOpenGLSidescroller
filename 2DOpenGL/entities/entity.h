@@ -89,9 +89,19 @@ public:
 	virtual std::vector<glm::vec2> getEntityUVs() { return UVs; }
 
 
+	void setBlendColour(glm::vec4 bc) { blendColour = bc; }
 
+
+
+	glm::vec4 getBlendColour() { return blendColour; }
 
 	BoundingBox *getBoundingBox();
+
+
+	void setShouldRender(bool r) { shouldRender = r; }
+
+	bool getShouldRender() { return shouldRender; }
+
 
 	//hacky player code
 	void moveRight(float dt);
@@ -100,6 +110,8 @@ public:
 	void moveDown(float dt);
 	void moveUp(float dt);
 
+
+	
 	
 
 
@@ -108,6 +120,7 @@ protected:
 	void setQuadVertices(std::vector<glm::vec2> &vertices);
 	void setQuadUVs(std::vector<glm::vec2> &UVs);
 
+	void updateBoundingBoxMatrix();
 
 
 
@@ -116,25 +129,40 @@ protected:
 	std::vector<Model*> entModels;
 	std::vector<Texture*> entTextures;
 
+
+	///The model for this entity
 	Model *model;
+
+	///The model matrix
 	glm::mat4 modelMatrix;
+
+	glm::mat4 bbMatrix;
+
+	///The rotation matrix
 	glm::mat4 rotMatrix;
+
+	///The scale
 	glm::vec3 modScale;
+
 	//rotation
-	//x axis
+	///x axis rotation
 	float rotPitch;
-	//y axis
+	///y axis rotation
 	float rotYaw;
-	//z-axis
+	///z-axis rotation
 	float rotRoll;
 
-
+	///If entity is container or not
 	bool container;
 
+	///speed of the entity
 	float speed;
 
 	///position of the entity
 	glm::vec3 pos;
+
+	///The dimensions of the entity
+	glm::vec3 dimens;
 
 	///the offset of position - half width and height
 	glm::vec3 offsetPos;
@@ -142,8 +170,8 @@ protected:
 
 	Texture * entTexture;
 
-	glm::vec3 dimens;
 	
+	///The entity's bounding box - used for collision
 	BoundingBox *bb;
 
 
@@ -152,4 +180,10 @@ protected:
 
 	std::vector<glm::vec2> UVs;
 	std::vector<glm::vec2> vertices;
+
+
+	glm::vec4 blendColour;
+
+
+	bool shouldRender;
 };

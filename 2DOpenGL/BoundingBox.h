@@ -12,19 +12,18 @@ public:
 	BoundingBox(glm::vec3 vMin3, glm::vec3 vMax3);
 	~BoundingBox();
 
-	void transformByMat4(glm::mat4 m);
+	void transformByMat4(const glm::mat4 &m);
 
 	glm::vec3 getVMin();
 	glm::vec3 getVMax();
 
 
-	glm::vec3 getSupport(glm::vec3 dir);
-
-	int getNumFaces();
-	int getNumEdges();
+	//glm::vec3 getSupport(glm::vec3 dir);
 
 
-	Edge* getEdge(int index);
+	int getNumEdges() { return origEdges.size(); }
+
+	Edge getEdge(int index) { return currentEdges[index]; }
 
 
 
@@ -45,10 +44,10 @@ private:
 	std::vector<int> indices;
 
 
-	std::vector<glm::vec3> newVertices;
+	std::vector<glm::vec3> currentVerts;
 
-	std::vector<Edge*> edges;
-	std::vector<Edge*> newEdges;
+	std::vector<Edge> origEdges;
+	std::vector<Edge> currentEdges;
 
 	
 };

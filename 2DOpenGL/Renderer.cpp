@@ -17,7 +17,7 @@ Renderer::Renderer(Platform* platform, ResourceManager * rm) : platform(platform
 
 
 
-
+		blendColourID = glGetUniformLocation(shaderProg.getProgramID(), "blendColour");
 
 
 		glGenVertexArrays(1, &VertexArrayID);
@@ -80,6 +80,10 @@ void Renderer::render(std::vector<State*> states)
 
 				glUniformMatrix4fv(mvpID, 1, GL_FALSE, &mvp[0][0]);
 
+
+				glm::vec4 bc = entities[i]->getBlendColour();
+
+				glUniform4fv(blendColourID, 1, &bc[0]);
 
 				//vertices buffer
 				GLuint vertexBuffer = ms[k]->getVertexBuffer2D();

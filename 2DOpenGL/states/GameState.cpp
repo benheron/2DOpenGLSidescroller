@@ -48,13 +48,17 @@ void GameState::update(float dt)
 		e1->setRoll(-2 * dt, 1);
 	}
 
-	camera->setPosition(e1->getCentrePosition() * glm::vec3(-1), false);
-	camera->setPosition(glm::vec3(platform->getWindowSize() / 2.f * glm::vec2(1), 0), true);
+	//camera->setPosition(e1->getCentrePosition() * glm::vec3(-1), false);
+	//camera->setPosition(glm::vec3(platform->getWindowSize() / 2.f * glm::vec2(1), 0), true);
 
 	for (int i = 0; i < entities.size(); i++)
 	{
 		//printf("%i\n", i);
 		entities[i]->update(dt);
+
+
+
+		bool playerCollidedWithTile = mn->collideWithTile(e1);
 	}
 
 }
@@ -66,7 +70,7 @@ void GameState::load()
 	
 
 
-	MapRoom *mn = new MapRoom(rm->getMapManager(), rm->getTileTypeManager(), "M01");
+	mn = new MapRoom(rm->getMapManager(), rm->getTileTypeManager(), "M01");
  
 	entities.push_back(mn);
 
@@ -79,11 +83,11 @@ void GameState::load()
 
 
 	glm::vec3 entPos = glm::vec3(0, 0, 0);
-	glm::vec3 entDimens = glm::vec3(0, 0, 0);
+	//glm::vec3 entDimens = glm::vec3(0, 0, 0);
 	Texture* t1 = new Texture("res/img/movplat.png");
-	e1 = new Entity(t1, entPos, entDimens);
+	e1 = new Entity(t1, entPos);
 
-	e1->setPosition(glm::vec3(500, 730, 0));
+	//e1->setPosition(glm::vec3(500, 730, 0));
 
 	entities.push_back(e1);
 	
