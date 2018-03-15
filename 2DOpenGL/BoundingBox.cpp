@@ -1,6 +1,6 @@
 #include "BoundingBox.h"
 
-BoundingBox::BoundingBox(glm::vec3 vMin3, glm::vec3 vMax3)
+BoundingBox::BoundingBox(glm::vec3 vMin3, glm::vec3 vMax3, glm::vec3 offset) : offset(offset)
 {
 	vMin = glm::vec4(vMin3, 1);
 	vMax = glm::vec4(vMax3, 1);
@@ -76,6 +76,8 @@ void BoundingBox::generateVertsAndInds()
 	vertices.push_back(bottomLeft);
 
 	currentVerts = vertices;
+
+	
 }
 
 

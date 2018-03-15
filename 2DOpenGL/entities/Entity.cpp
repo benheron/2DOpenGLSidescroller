@@ -83,9 +83,11 @@ void Entity::init()
 	}
 	
 
-	bb = new BoundingBox(pos- offsetPos, pos -offsetPos+dimens);
+	bb = new BoundingBox(-offsetPos, -offsetPos+dimens, offsetPos);
 
 	updateModelMatrix();
+
+	bb->transformByMat4(modelMatrix);
 
 }
 
@@ -99,7 +101,7 @@ void Entity::update(float dt)
 
 	updateModelMatrix();
 
-	bb->transformByMat4(bbMatrix);
+	bb->transformByMat4(modelMatrix);
 	
 
 }
@@ -111,7 +113,7 @@ void Entity::updateModelMatrix()
 
 	glm::mat4 mm = glm::mat4(1.0);
 
-	glm::vec3 jointPos = pos;// +offsetPos;
+	glm::vec3 jointPos = pos +offsetPos;
 
 	//glm::vec3 nPos = glm::vec3((int)jointPos.x, (int)jointPos.y, (int)jointPos.z);
 
@@ -121,7 +123,7 @@ void Entity::updateModelMatrix()
 
 	//translate to new position
 	//use joint position as this is for rendering
-	mm = glm::translate(mm, pos - offsetPos);
+	mm = glm::translate(mm, jointPos);
 
 	//rotate x
 	mm = glm::rotate(mm, rotPitch, glm::vec3(1, 0, 0));
@@ -136,31 +138,9 @@ void Entity::updateModelMatrix()
 	
 	modelMatrix = mm;
 
-	updateBoundingBoxMatrix();
+	//updateBoundingBoxMatrix();
 }
 
-void Entity::updateBoundingBoxMatrix()
-{
-	glm::mat4 mm = glm::mat4(1.0);
-
-	//translate to new position
-	mm = glm::translate(mm, pos - offsetPos);
-
-	//rotate x
-	mm = glm::rotate(mm, rotPitch, glm::vec3(1, 0, 0));
-	//rotate y
-	mm = glm::rotate(mm, rotYaw, glm::vec3(0, 1, 0));
-	//rotate z
-	mm = glm::rotate(mm, rotRoll, glm::vec3(0, 0, 1));
-
-	//scale
-	mm = glm::scale(mm, modScale);
-
-
-
-
-	bbMatrix = mm;
-}
 
 
 

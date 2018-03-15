@@ -48,8 +48,8 @@ void GameState::update(float dt)
 		e1->setRoll(-2 * dt, 1);
 	}
 
-	//camera->setPosition(e1->getCentrePosition() * glm::vec3(-1), false);
-	//camera->setPosition(glm::vec3(platform->getWindowSize() / 2.f * glm::vec2(1), 0), true);
+	camera->setPosition(e1->getCentrePosition() * glm::vec3(-1), false);
+	camera->setPosition(glm::vec3(platform->getWindowSize() / 2.f * glm::vec2(1), 0), true);
 
 	for (int i = 0; i < entities.size(); i++)
 	{

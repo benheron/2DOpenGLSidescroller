@@ -120,8 +120,6 @@ protected:
 	void setQuadVertices(std::vector<glm::vec2> &vertices);
 	void setQuadUVs(std::vector<glm::vec2> &UVs);
 
-	void updateBoundingBoxMatrix();
-
 
 
 	bool modelMatChanged;

@@ -9,7 +9,7 @@
 class BoundingBox
 {
 public:
-	BoundingBox(glm::vec3 vMin3, glm::vec3 vMax3);
+	BoundingBox(glm::vec3 vMin3, glm::vec3 vMax3, glm::vec3 offset = glm::vec3(0));
 	~BoundingBox();
 
 	void transformByMat4(const glm::mat4 &m);
@@ -48,6 +48,8 @@ private:
 
 	std::vector<Edge> origEdges;
 	std::vector<Edge> currentEdges;
+
+	glm::vec3 offset;
 
 	
 };
