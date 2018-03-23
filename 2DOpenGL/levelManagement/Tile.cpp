@@ -2,14 +2,14 @@
 
 
 
-Tile::Tile(glm::vec3 pos, glm::vec3 dimensions, TileType *tileType) : Entity(pos, dimensions, tileType->getSpriteDimensions()), tileType(tileType)
+Tile::Tile(glm::vec3 pos, glm::vec3 dimensions, TileType *tileType) : WorldObject(pos, dimensions, tileType->getSpriteDimensions()), tileType(tileType)
 {
 
 	tileInit();
 
 }
 
-Tile::Tile(Texture* texture, glm::vec3 pos, glm::vec3 dimensions, TileType *tileType) : Entity(texture, pos, dimensions), tileType(tileType)
+Tile::Tile(Texture* texture, glm::vec3 pos, glm::vec3 dimensions, TileType *tileType) : WorldObject(texture, pos, dimensions), tileType(tileType)
 {
 
 	tileInit();
@@ -30,6 +30,9 @@ void Tile::tileInit()
 	sideR = false;
 	sideU = false;
 	sideD = false;
+
+	staticFriction = 0.95;
+	dynamicFriction = 15;
 }
 
 Tile::~Tile()

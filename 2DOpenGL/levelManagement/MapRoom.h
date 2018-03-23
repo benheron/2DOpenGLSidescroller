@@ -8,7 +8,7 @@
 #include <math.h>
 #include "../Collision.h"
 
-#include "../entities/Entity.h"
+#include "../entities/Actor.h"
 
 
 //for textmodmat
@@ -53,7 +53,7 @@ public:
 	void labelTileSides();
 
 
-	bool collideWithTile(Entity* e);
+	bool collideWithTile(Actor* e, float dt);
 
 
 

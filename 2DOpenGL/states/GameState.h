@@ -5,7 +5,7 @@
 #include "../Camera.h"
 #include "../Collision.h"
 #include "../levelManagement/MapRoom.h"
-#include "../levelManagement/Tile.h"
+#include "../entities/Actor.h"
 
 class GameOverState;
 
@@ -43,7 +43,7 @@ protected:
 	virtual void unload();
 
 
-	
+	bool cameraFollow = true;
 
 
 	Entity *player;
@@ -56,6 +56,15 @@ protected:
 	KeyboardManager*km;
 
 
-	Entity* e1;
+	Actor* e1;
+
+
+	float timings;
+	bool hasMoved;
+
+	float lastVel;
+
+	bool postVel = false;
+	float speedWhenStopped = 0.f;
 	
 };

@@ -17,13 +17,22 @@ public:
 	glm::vec3 getVMin();
 	glm::vec3 getVMax();
 
+	glm::vec3 getVertex(int index) { return currentVerts[index]; }
 
-	//glm::vec3 getSupport(glm::vec3 dir);
+	glm::vec3 getSupport(glm::vec3 dir);
 
 
 	int getNumEdges() { return origEdges.size(); }
 
 	Edge getEdge(int index) { return currentEdges[index]; }
+
+
+	void reverseDir();
+
+
+	void reverseX();
+	
+	void reverseY();
 
 
 
@@ -48,7 +57,7 @@ private:
 
 	std::vector<Edge> origEdges;
 	std::vector<Edge> currentEdges;
-
+	
 	glm::vec3 offset;
 
 	

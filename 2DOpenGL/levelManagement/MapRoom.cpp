@@ -244,8 +244,11 @@ void MapRoom::labelTileSides()
 	}
 }
 
-bool MapRoom::collideWithTile(Entity* e)
+bool MapRoom::collideWithTile(Actor* e, float dt)
 {
+	bool collision = false;
+	e->setOnFloor(false);
+
 	glm::vec3 entPos = e->getPosition();
 	glm::vec3 entPosDim = entPos + e->getDimensions();
 
@@ -256,17 +259,20 @@ bool MapRoom::collideWithTile(Entity* e)
 	int maxTileX = floor(entPosDim.x / tileSize.x);
 	int maxTileY = floor(entPosDim.y / tileSize.y);
 
-	int xLimit = roomTiles["O"].size() - 1;
-	int yLimit = roomTiles["O"][0].size() - 1;
+	int xLimit = roomTiles["O"][0].size() - 1;
+	int yLimit = roomTiles["O"].size() - 1;
+	
 
 	e->setBlendColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	glm::vec4 blendCol = glm::vec4(1.0f, .0f, .0f, 1.0f);
+
+	bool usedFriction = false;
 	
 
-	for (int i = minTileY - 2; i < maxTileY + 2; i++)
+	for (int i = minTileY - 1; i < maxTileY + 1; i++)
 	{
-		for (int j = minTileX - 2; j < maxTileX + 2; j++)
+		for (int j = minTileX - 1; j < maxTileX + 1; j++)
 		{
 			if (i > -1 && i < yLimit &&
 				j > -1 && j < xLimit)
@@ -274,22 +280,222 @@ bool MapRoom::collideWithTile(Entity* e)
 				Tile* curTile = roomTiles["O"][i][j];
 				if (!curTile->haveBlankID())
 				{
-					//if (Collision::boxBoxCollision(e->getBoundingBox(), curTile->getBoundingBox()))
-					if (Collision::SATIntersection(e->getBoundingBox(), curTile->getBoundingBox()))
+					std::vector<glm::vec3> vTests;
+
+
+					if (!curTile->getSideU())
 					{
-						e->setBlendColour(blendCol);
-						curTile->setBlendColour(blendCol);
+						vTests.push_back(glm::vec3(0, -1, 0));
+					}
+
+					if (!curTile->getSideL())
+					{
+						vTests.push_back(glm::vec3(-1, 0, 0));
+					}
+
+					if (!curTile->getSideR())
+					{
+						vTests.push_back(glm::vec3(1, 0, 0));
+					}
+
+					if (!curTile->getSideD())
+					{
+						vTests.push_back(glm::vec3(0, 1, 0));
+					}
+
+
+
+
+					PenDir pdEnt;
+					PenDir pdTile;
+					//if (Collision::SATSupportAxes(e->getBoundingBox(), curTile->getBoundingBox(), pdEnt, pdTile, vTests))
+					if (Collision::SATSupport(e->getBoundingBox(), curTile->getBoundingBox(), pdEnt, pdTile))
+					{
+						
 
 						
-					}
+						bool onFloor = false;
+						collision = true;
+
+						
+						
+						glm::vec3 changPos;
+						glm::vec3 colDir;
+
+						//check which collision to us
+						if (pdEnt.penetration < pdTile.penetration)
+						{
+							//use pdEnt 
+							changPos = pdEnt.penetration * -pdEnt.dir;
+							colDir = -pdEnt.dir;
+						}
+						else {
+							//use pdTile
+							changPos = pdTile.penetration * pdTile.dir;
+							colDir = pdTile.dir;
+						}
+						
+						//make sure they're going towards each other
+						//get relative velocity along collision direction
+
+						glm::vec3 relativeVelocity =  e->getVelocity() - curTile->getVelocity();
+						glm::vec3 relVelAlongNormal = relativeVelocity * colDir;
+						float relVelNorm = relVelAlongNormal.x + relVelAlongNormal.y;
+
+						//make sure tile and actor are actually going towards each other
+						//stops rare bugs when velocity stops after colliding with a wall not actual moving towards
+						if (relVelNorm > 0)
+						{
+							continue;
+						}
+
+
+						
+				
+
+
+						glm::vec3 tileDir = pdTile.dir;
+
+						bool collideWithThisTile = false;
+
+						if (curTile->getSideU())
+						{
+							if ((tileDir.y == -1.f && tileDir.x == 0.f)||
+								(colDir.y == -1.f && colDir.x == 0.f)
+								)
+							{
+								collideWithThisTile = true;
+								onFloor = true;
+							}
+						}
+
+						if (curTile->getSideD())
+						{
+							if ((tileDir.y == 1.f && tileDir.x == 0.f)||
+								(colDir.y == -1.f && colDir.x == 0.f)
+								)
+							{
+								collideWithThisTile = true;
+							}
+						}
+
+						if (curTile->getSideL())
+						{
+							if ((tileDir.x == -1.f && tileDir.y == 0.f)||
+								(colDir.y == -1.f && colDir.x == 0.f)
+								)
+							{
+								collideWithThisTile = true;
+							}
+						}
+
+						if (curTile->getSideR())
+						{
+							if (tileDir.x == 1.f && tileDir.y == 0.f ||
+								colDir.y == -1.f && colDir.x == 0.f
+								)
+							{
+								
+								collideWithThisTile = true;
+							}
+						}
+
+
+						glm::vec3 tangent = relativeVelocity - colDir*relVelNorm;
+
+
+						glm::vec3 tnorm;
+						glm::vec3 frictionVel;
+
+
+						if (tangent.x < 0.01 &&
+							tangent.x > -0.01)
+						{
+							tangent.x = 0;
+						}
+
+						if (tangent.y < 0.01 &&
+							tangent.y > -0.01)
+						{
+							tangent.y = 0;
+						}
+
+						if (e->getVelocity().x < 0.f)
+						{
+							tnorm = glm::vec3(-1, 0, 0);
+						}
+						else {
+							tnorm = glm::vec3(1, 0, 0);
+						}
+						 
 					
+
+						//glm::vec3(abs(tangent.x), abs(tangent.y), 0)
+
+						if (glm::vec3(abs(tangent.x), abs(tangent.y), 0) != glm::vec3(0, 0, 0))
+						{
+							//tnorm = glm::normalize(tangent);
+
+
+
+							frictionVel = tnorm * glm::vec3(e->getVelocity().x, 0, 0);
+							float pbf = (frictionVel.x + frictionVel.y);
+
+							pbf *= 0.8f;
+
+							frictionVel *= curTile->getDynamicFriction() *1;// *pbf;
+
+							//float pushBackFriction = -(frictionVel.x + frictionVel.y);
+						} else{
+							frictionVel = glm::vec3(0);
+						}
+						
+
+
+
+
+
+
+						
+						if (collideWithThisTile)
+						{
+
+
+							e->hitTile(colDir, tangent, frictionVel, dt);
+							e->setPosition(changPos, true);
+
+							//collision direction is positive y
+							//there is a tile underneath
+							if (onFloor)
+							{
+								e->setBlendColour(glm::vec4(.0f, 1.0f, .0f, 1.0f));
+								e->setOnFloor(true);
+								if (!usedFriction)
+								{
+									e->hitTileFriction(tangent, frictionVel, dt);
+									usedFriction = true;
+								}
+								
+								
+
+							} else {
+								e->setBlendColour(blendCol);
+							}
+							
+						}
+					
+
+
+				
+
+					}
 				}
 			}
 		}
 	}
 
 
-	return true;
+	return collision;
 }
 
 

@@ -89,21 +89,57 @@ void Entity::init()
 
 	bb->transformByMat4(modelMatrix);
 
+
+	acceleration = glm::vec3(0, 0.f, 0);
+
+	velocity = glm::vec3(0);
+
 }
 
 void Entity::update(float dt)
 {
+	velocity.x += acceleration.x *dt;
+	velocity.y += acceleration.y *dt;
+
+
+
+	if (velocity.x > maxXVel)
+	{
+		velocity.x = maxXVel;
+	}
+	else if (velocity.x < -maxXVel)
+	{
+		velocity.x = -maxXVel;
+	}
+
+	
+	
+	pos += velocity * dt;
+
 
 	if (!modelMatChanged)
 	{
-		return;
+		//return;
 	}
+
+
+	if (velocity.x < 0)
+	{
+		rotYaw = 3.14159265359;
+	}
+	if (velocity.x > 0)
+	{
+		rotYaw = 0;
+	}
+
+
 
 	updateModelMatrix();
 
-	bb->transformByMat4(modelMatrix);
-	
+	updateBoundingBoxMatrix();
 
+
+	acceleration.x = 0;
 }
 
 
@@ -115,11 +151,15 @@ void Entity::updateModelMatrix()
 
 	glm::vec3 jointPos = pos +offsetPos;
 
-	//glm::vec3 nPos = glm::vec3((int)jointPos.x, (int)jointPos.y, (int)jointPos.z);
+	glm::vec3 roundPos = glm::vec3(round(pos.x), round(pos.y), 0);
 
-	glm::vec3 nPos = glm::vec3(jointPos.x, jointPos.y, jointPos.z);
+	//glm::vec3 nPos = glm::vec3(round(jointPos.x), round(jointPos.y), round(jointPos.z));
 
-	
+	glm::vec3 nPos = roundPos + offsetPos;
+
+	//printf("Real feet position y: %f \n", (pos.y + dimens.y));
+	//printf("Jointpos position y: %f \n", jointPos.y);
+	//printf("Render position y: %f \n", nPos.y);
 
 	//translate to new position
 	//use joint position as this is for rendering
@@ -138,11 +178,35 @@ void Entity::updateModelMatrix()
 	
 	modelMatrix = mm;
 
-	//updateBoundingBoxMatrix();
 }
 
 
+void Entity::updateBoundingBoxMatrix()
+{
+	glm::mat4 mm = glm::mat4(1.0);
 
+	glm::vec3 jointPos = pos + offsetPos;
+
+	mm = glm::translate(mm, jointPos);
+
+	//rotate x
+	mm = glm::rotate(mm, rotPitch, glm::vec3(1, 0, 0));
+	//rotate y
+	mm = glm::rotate(mm, rotYaw, glm::vec3(0, 1, 0));
+	//rotate z
+	mm = glm::rotate(mm, rotRoll, glm::vec3(0, 0, 1));
+
+	//scale
+	mm = glm::scale(mm, modScale);
+
+
+	bb->transformByMat4(mm);
+
+	if (rotYaw >= 3.14/2)
+	{
+		bb->reverseDir();
+	}
+}
 
 
 void Entity::setQuadVertices(std::vector<glm::vec2> &vertices)
@@ -227,6 +291,9 @@ void Entity::setPosition(glm::vec3 p, bool add)
 	else {
 		pos = p;
 	}
+	updateModelMatrix();
+	updateBoundingBoxMatrix();
+
 	modelMatChanged = true;
 }
 
@@ -267,6 +334,20 @@ void Entity::setRoll(float rot, bool add)
 	modelMatChanged = true;
 }
 
+
+
+void Entity::setVelocity(glm::vec3 v, bool add)
+{
+	if (add)
+	{
+		velocity += v;
+	}
+	else {
+		velocity = v;
+	}
+	modelMatChanged = true;
+}
+
 Model* Entity::getModel()
 {
 	return model;
@@ -290,27 +371,6 @@ glm::mat4 Entity::getModelMatrix()
 }
 
 
-
-void Entity::strafeLeft(float dt)
-{
-	
-}
-
-void Entity::strafeRight(float dt)
-{
-	
-}
-
-void Entity::moveForward(float dt)
-{
-	
-}
-
-void Entity::moveBackward(float dt)
-{
-
-}
-
 void Entity::setScale(glm::vec3 s)
 {
 	modScale = s;
@@ -326,36 +386,9 @@ BoundingBox *Entity::getBoundingBox()
 	return bb;
 }
 
-void Entity::moveRight(float dt)
-{
-	pos.x += speed * dt;
-
-	modelMatChanged = true;
-}
-
-void Entity::moveLeft(float dt)
-{
-	pos.x -= speed * dt;
-
-	modelMatChanged = true;
-}
-
-void Entity::moveDown(float dt)
-{
-	pos.y += speed * dt;
-
-	modelMatChanged = true;
-}
-
-void Entity::moveUp(float dt)
-{
-	pos.y -= speed * dt;
-
-	modelMatChanged = true;
-}
-
 
 float Entity::getRoll()
 {
 	return rotRoll;
 }
+

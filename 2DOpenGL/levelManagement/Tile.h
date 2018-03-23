@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../entities/Entity.h"
+#include "../entities/WorldObject.h"
 #include "TileType.h"
 #include "TileTypeManager.h"
 
@@ -9,7 +9,7 @@
 /**
 @brief Contains all the data and functions dealing with the Tile objects.
 */
-class Tile : public Entity
+class Tile : public WorldObject
 {
 public:
 

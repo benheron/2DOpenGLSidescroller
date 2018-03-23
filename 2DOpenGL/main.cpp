@@ -114,7 +114,7 @@ void close()
 int main( int argc, char* args[] )
 {
 
-	Platform *platform = new Platform("OpenGL project!", glm::vec2(640, 480));
+	Platform *platform = new Platform("OpenGL project!", glm::vec2(1024, 576));
 
 
 	srand(time(NULL));
@@ -147,6 +147,11 @@ int main( int argc, char* args[] )
 	//Enable text input
 	//SDL_StartTextInput();
 
+
+	unsigned int startTime = SDL_GetTicks();
+
+	//float dt = 1.f / 144.f;
+
 	//While application is running
 	while( !quit )
 	{
@@ -161,7 +166,7 @@ int main( int argc, char* args[] )
 		lastTime = current;
 
 		
-
+		
 
 		
 
@@ -177,9 +182,21 @@ int main( int argc, char* args[] )
 		{
 			std::string str = std::to_string(frames);
 			fr->changeTextEnd(str);
+			//printf("FPS: %i", frames);
 		}
-	
 
+		//tests for framerate problem
+		//turns out Netflix caused them
+		/*if (frames > 0 && frames < 60)
+		{
+			unsigned int timeNow = SDL_GetTicks();
+
+			unsigned int diffSinceStart = timeNow - startTime;
+			startTime = timeNow;
+			printf("Ticks since last frame problem: %i \n", diffSinceStart);
+		}*/
+	
+		
 		//printf("%i ms/frame\n", int(frames));
 
 		//Handle events on queue
@@ -200,12 +217,13 @@ int main( int argc, char* args[] )
 				break;
 			}
 		}
+		
 
 		stateManager->update(dt);
 
 
 		renderer->render(stateManager->getStates());
-		//renderer->renderFrameRate(fr);
+		renderer->renderFrameRate(fr);
 			
 		//Update screen
 		SDL_GL_SwapWindow( platform->getWindow() );

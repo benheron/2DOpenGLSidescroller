@@ -58,7 +58,7 @@ void Renderer::render(std::vector<State*> states)
 
 		std::vector<Entity*> entities = states[j]->getRenderables();
 
-		glm::mat4 projMat = glm::ortho(0.0f, platform->getWindowSize().x, platform->getWindowSize().y, 0.0f, 1.0f, -1.0f);
+		glm::mat4 projMat = glm::ortho(0.0f, platform->getWindowSize().x, platform->getWindowSize().y, 0.0f, 3.0f, -3.0f);
 
 		glm::mat4 viewMat = states[j]->getCamera()->getCamMatrix();
 			

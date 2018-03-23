@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Texture.h"
 #include "../BoundingBox.h"
-
+#include <math.h> 
 
 class Entity {
 public:
@@ -29,7 +29,13 @@ public:
 
 	void updateModelMatrix();
 
+	void updateBoundingBoxMatrix();
 
+	void setVelocity(glm::vec3 v, bool add = false);
+	glm::vec3 getVelocity() { return velocity; }
+
+	void setAcceleration(glm::vec3 a, bool add = false);
+	glm::vec3 getAcceleration() { return acceleration; }
 
 
 	void setModel(Model *m);
@@ -77,12 +83,7 @@ public:
 
 	glm::mat4 getModelMatrix();
 
-	void strafeLeft(float dt);
-	void strafeRight(float dt);
 
-	void moveForward(float dt);
-
-	void moveBackward(float dt);
 
 
 	std::vector<glm::vec2> getEntityVertices() { return vertices; }
@@ -103,14 +104,7 @@ public:
 	bool getShouldRender() { return shouldRender; }
 
 
-	//hacky player code
-	void moveRight(float dt);
-	void moveLeft(float dt);
-
-	void moveDown(float dt);
-	void moveUp(float dt);
-
-
+	
 	
 	
 
@@ -120,7 +114,7 @@ protected:
 	void setQuadVertices(std::vector<glm::vec2> &vertices);
 	void setQuadUVs(std::vector<glm::vec2> &UVs);
 
-
+	//void setVec3(glm::vec3 &v, glm::vec3 changeV, bool add);
 
 	bool modelMatChanged;
 
@@ -184,4 +178,12 @@ protected:
 
 
 	bool shouldRender;
+
+	glm::vec3 velocity;
+	glm::vec3 offsetVal;
+
+
+	float maxXVel;
+
+	glm::vec3 acceleration;
 };
