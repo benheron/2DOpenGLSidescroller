@@ -11,12 +11,15 @@ uniform mat4 m;
 uniform mat4 v;
 
 
+uniform vec2 offsetUV;
+
+
 void main()
 {
 	gl_Position = mvp * vec4(vertPosModelSpace, 1, 1);
 
 
 
-    UV.x = vertUV.x;
-	UV.y = vertUV.y;
+    UV.x = vertUV.x + offsetUV.x;
+	UV.y = vertUV.y + offsetUV.y;
 }

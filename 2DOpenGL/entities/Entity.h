@@ -65,6 +65,11 @@ public:
 
 	virtual std::vector<Texture*> getTextures() { return entTextures; }
 	
+
+
+
+
+
 	///rotate across x axis
 	void setYaw(float rot, bool add);
 	///rotate across y axis
@@ -86,7 +91,7 @@ public:
 
 
 
-	std::vector<glm::vec2> getEntityVertices() { return vertices; }
+	std::vector<glm::vec2> getEntityVertices();
 	virtual std::vector<glm::vec2> getEntityUVs() { return UVs; }
 
 
@@ -133,8 +138,11 @@ protected:
 	///The rotation matrix
 	glm::mat4 rotMatrix;
 
-	///The scale
+	///The scale beyond sprite size
 	glm::vec3 modScale;
+
+	//scale for the sprite size
+	glm::vec3 dimensScale;
 
 	//rotation
 	///x axis rotation

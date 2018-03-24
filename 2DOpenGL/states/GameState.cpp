@@ -181,7 +181,7 @@ void GameState::load()
 	glm::vec3 entPos = glm::vec3(0, 0, 0);
 	//glm::vec3 entDimens = glm::vec3(0, 0, 0);
 	Texture* t1 = new Texture("res/img/gingman2.png");
-	e1 = new Actor(t1, entPos);
+	e1 = new Actor(rm->getSpriteSheetManager()->getSpriteSheetByID("Gingerman"), entPos, glm::vec3(20,32,0));
 
 	e1->setPosition(glm::vec3(500, 730, 0));
 	//e1->setRoll(Collision::PI/2, false);

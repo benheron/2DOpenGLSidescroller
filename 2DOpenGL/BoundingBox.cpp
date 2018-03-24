@@ -36,6 +36,7 @@ void BoundingBox::transformByMat4(const glm::mat4 &m)
 
 		glm::vec4 newN = m*n;
 		currentEdges[i].normal = newN;
+		currentEdges[i].normal = glm::normalize(currentEdges[i].normal);
 
 
 		glm::vec4 d = glm::vec4(origEdges[i].dir, 0);
@@ -56,6 +57,7 @@ void BoundingBox::transformByMat4(const glm::mat4 &m)
 		
 	}
 
+	int f = 0;
 }
 
 

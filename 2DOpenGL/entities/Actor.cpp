@@ -1,6 +1,6 @@
 #include "Actor.h"
 
-Actor::Actor(Texture* entTexture, glm::vec3 pos, glm::vec3 dimens, glm::vec2 uvSize) : WorldObject(entTexture, pos, dimens, uvSize)
+Actor::Actor(SpriteSheet* actorSpriteSheet, glm::vec3 pos, glm::vec3 dimens, glm::vec2 uvSize) : WorldObject(actorSpriteSheet->getTexture(), pos, dimens, uvSize), actorSpriteSheet(actorSpriteSheet)
 {
 	actorInit();
 }
@@ -45,6 +45,26 @@ void Actor::actorInit()
 	airSpeed = 350;
 
 	drag = 75.f;
+
+	changeAnimation = false;
+
+	alive = true;
+
+	aState = idleState;
+
+
+	//set animation
+
+	AnimationType* atype = actorSpriteSheet->getAnimationType("M");
+
+	currentAnimation = new Animation();
+
+	currentAnimation->setAnimationType(atype);
+	currentAnimation->playAnimation();
+	dimens = glm::vec3(currentAnimation->getCurrentFrame()->getFrameDimens(), 0) * glm::vec3(actorSpriteSheet->getTexture()->getOrigDimens(), 0);
+
+
+	dimensScale = glm::vec3(1.0) * glm::vec3(dimens.x / 2, dimens.y / 2, 0);
 }
 
 
@@ -90,14 +110,57 @@ void Actor::update(float dt)
 		
 	}
 
+	if (alive)
+	{
+		if (onFloor) {
+			if (abs(velocity.x) > 0.01)
+			{
+				aState = movingState;
+			}
+			else {
+				aState = idleState;
+			}
+			//velocity *= 0.98f;
+		}
+		else {
+			aState = jumpingState;
+		}
+	}
+	else {
+		aState = deadState;
+	}
 
+	//animation
+	if (aState != prevState)
+	{
+		switch (aState)
+		{
+		case idleState:
+			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("I"));
+
+			break;
+		case movingState:
+			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("M"));
+
+			break;
+
+		case jumpingState:
+			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("J"));
+			break;
+		}
+
+		if (changeAnimation)
+		{
+			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("J"));
+			currentAnimation->playAnimation();
+			changeAnimation = false;
+		}
+	}
 	
-
-	fHBPos = pos + fHBPos;
-	updateFloorHitBox();
+	currentAnimation->update(dt);
 
 
-	
+	prevState = aState;
 	
 }
 
@@ -253,4 +316,11 @@ void Actor::hitTileFriction(glm::vec3 tangent, glm::vec3 frictionVel, float dt)
 	}
 
 
+}
+
+
+
+glm::vec2 Actor::getTextureUVOffset()
+{
+	return currentAnimation->getCurrentFrame()->getFramePos();
 }

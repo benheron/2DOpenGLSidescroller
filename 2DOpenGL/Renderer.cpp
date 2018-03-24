@@ -20,6 +20,9 @@ Renderer::Renderer(Platform* platform, ResourceManager * rm) : platform(platform
 		blendColourID = glGetUniformLocation(shaderProg.getProgramID(), "blendColour");
 
 
+		offsetUVID = glGetUniformLocation(shaderProg.getProgramID(), "offsetUV");
+
+
 		glGenVertexArrays(1, &VertexArrayID);
 		glBindVertexArray(VertexArrayID);
 
@@ -88,8 +91,15 @@ void Renderer::render(std::vector<State*> states)
 				//vertices buffer
 				GLuint vertexBuffer = ms[k]->getVertexBuffer2D();
 
-				//normal buffer
+				//UV buffer
 				GLuint uvBuffer = ms[k]->getUVBuffer();
+
+				glm::vec2 uvOffset = entities[i]->getTextureUVOffset();
+
+
+				//= glm::vec2(0);
+				
+				glUniform2fv(offsetUVID, 1, &uvOffset[0]);
 
 
 				GLsizei indexSize = ms[k]->getVertices2D().size();

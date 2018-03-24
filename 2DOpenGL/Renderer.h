@@ -41,6 +41,7 @@ protected:
 	GLuint blendColourID;
 	GLuint textureID;
 	GLuint mvpID;
+	GLuint offsetUVID;
 
 //	GLuint lastTextID = 9999;
 

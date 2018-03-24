@@ -1,15 +1,21 @@
 #pragma once
 #include "WorldObject.h"
+#include "../Animation/SpriteSheet.h"
+#include  "../Animation/Animation.h"
 
 enum ActorState
 {
-
+	idleState,
+	movingState,
+	jumpingState,
+	climbingState,
+	deadState
 };
 
 class Actor : public WorldObject
 {
 public:
-	Actor(Texture* entTexture, glm::vec3 pos = glm::vec3(0), glm::vec3 dimens = glm::vec3(0), glm::vec2 uvSize = glm::vec2(0));
+	Actor(SpriteSheet* actorSpriteSheet, glm::vec3 pos = glm::vec3(0), glm::vec3 dimens = glm::vec3(0), glm::vec2 uvSize = glm::vec2(0));
 
 	Actor(glm::vec3 pos = glm::vec3(0), glm::vec3 dimens = glm::vec3(0), glm::vec2 uvSize = glm::vec2(0), glm::vec3 offPos = glm::vec3(0), bool container = false);
 	~Actor();
@@ -36,7 +42,10 @@ public:
 
 	void hitTileFriction(glm::vec3 tangent, glm::vec3 frictionVel, float dt);
 
+	glm::vec2 getTextureUVOffset();
 
+
+	void setSpriteSheet(SpriteSheet* s) { actorSpriteSheet = s; }
 
 
 
@@ -52,6 +61,7 @@ public:
 	bool getOnFloor() { return onFloor; }
 
 private:
+	bool alive;
 
 	bool onFloor;
 
@@ -68,5 +78,16 @@ private:
 	float frictionTimings = 0;
 
 	float airSpeed;
+
+
+	bool changeAnimation;
+
+	SpriteSheet* actorSpriteSheet;
+	Animation* currentAnimation;
+
+
+
+	ActorState aState;
+	ActorState prevState;
 };
 

@@ -12,7 +12,8 @@ Entity::Entity(Texture* entTexture, glm::vec3 pos, glm::vec3 dimens2, glm::vec2 
 
 	if (uvSize == glm::vec2(0))
 	{
-		uvSize = glm::vec2(1);
+		uvSize.x = dimens.x/entTexture->getOrigDimens().x;
+		uvSize.y = dimens.y/entTexture->getOrigDimens().y;
 	}
 
 	container = false;
@@ -55,6 +56,13 @@ void Entity::init()
 
 	modScale = glm::vec3(1.0);
 
+	dimensScale = modScale * glm::vec3(dimens.x/2, dimens.y/2, 0);
+
+	if (dimensScale == glm::vec3(0))
+	{
+		dimensScale = glm::vec3(1);
+	}
+
 
 	speed = 150;
 
@@ -83,11 +91,14 @@ void Entity::init()
 	}
 	
 
-	bb = new BoundingBox(-offsetPos, -offsetPos+dimens, offsetPos);
+	bb = new BoundingBox(glm::vec3(-1.f, -1.f, 0), glm::vec3(1.f, 1.f, 0), offsetPos);
+
+	//bb = new BoundingBox(-offsetPos, -offsetPos+dimens, offsetPos);
 
 	updateModelMatrix();
+	updateBoundingBoxMatrix();
 
-	bb->transformByMat4(modelMatrix);
+	//bb->transformByMat4(bbMatrix);
 
 
 	acceleration = glm::vec3(0, 0.f, 0);
@@ -173,7 +184,10 @@ void Entity::updateModelMatrix()
 	mm = glm::rotate(mm, rotRoll, glm::vec3(0, 0, 1));
 
 	//scale
-	mm = glm::scale(mm, modScale);
+	glm::vec3 joinScale = modScale * dimensScale;
+
+
+	mm = glm::scale(mm, joinScale);
 
 	
 	modelMatrix = mm;
@@ -197,7 +211,7 @@ void Entity::updateBoundingBoxMatrix()
 	mm = glm::rotate(mm, rotRoll, glm::vec3(0, 0, 1));
 
 	//scale
-	mm = glm::scale(mm, modScale);
+	mm = glm::scale(mm, dimensScale);
 
 
 	bb->transformByMat4(mm);
@@ -216,12 +230,12 @@ void Entity::setQuadVertices(std::vector<glm::vec2> &vertices)
 	glm::vec3 startPos = pos - offsetPos;
 
 
-	glm::vec2 topLeftVert = glm::vec2(startPos.x, startPos.y);
-	glm::vec2 topRightVert = glm::vec2(startPos.x + dimens.x, startPos.y);
-	glm::vec2 bottomLeftVert = glm::vec2(startPos.x, startPos.y + dimens.y);
-	glm::vec2 bottomRightVert = glm::vec2(startPos.x + dimens.x, startPos.y + dimens.y);
 
 
+	glm::vec2 topLeftVert = glm::vec2(-1.f, -1.f);
+	glm::vec2 topRightVert = glm::vec2(1.f, -1.f);
+	glm::vec2 bottomLeftVert = glm::vec2(-1.f, 1.f);
+	glm::vec2 bottomRightVert = glm::vec2(1.f, 1.f);
 
 	vertices.push_back(topLeftVert);
 	vertices.push_back(bottomLeftVert);
@@ -230,6 +244,23 @@ void Entity::setQuadVertices(std::vector<glm::vec2> &vertices)
 	vertices.push_back(bottomRightVert);
 	vertices.push_back(topRightVert);
 	vertices.push_back(bottomLeftVert);
+
+
+
+
+
+	/*glm::vec2 topLeftVert = glm::vec2(startPos.x, startPos.y);
+	glm::vec2 topRightVert = glm::vec2(startPos.x + dimens.x, startPos.y);
+	glm::vec2 bottomLeftVert = glm::vec2(startPos.x, startPos.y + dimens.y);
+	glm::vec2 bottomRightVert = glm::vec2(startPos.x + dimens.x, startPos.y + dimens.y);
+
+	vertices.push_back(topLeftVert);
+	vertices.push_back(bottomLeftVert);
+	vertices.push_back(topRightVert);
+
+	vertices.push_back(bottomRightVert);
+	vertices.push_back(topRightVert);
+	vertices.push_back(bottomLeftVert);*/
 
 }
 
@@ -390,5 +421,24 @@ BoundingBox *Entity::getBoundingBox()
 float Entity::getRoll()
 {
 	return rotRoll;
+}
+
+
+std::vector<glm::vec2> Entity::getEntityVertices()
+{
+	std::vector<glm::vec2> tmpVertices;
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		glm::vec4 v = glm::vec4(vertices[i], 0, 1);
+		glm::vec4 newV = modelMatrix * v;
+
+		tmpVertices.push_back(glm::vec2(newV));
+	}
+
+	return tmpVertices;
+
+
+	return vertices;
 }
 

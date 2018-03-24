@@ -5,7 +5,7 @@ MapRoom::MapRoom()
 	
 }
 
-MapRoom::MapRoom(MapManager *mpmng, TileTypeManager *ttmng, std::string id) : Entity(glm::vec3(0), glm::vec3(0), glm::vec2(0), ttmng->getTileTypeSize() / 2.f, true)
+MapRoom::MapRoom(MapManager *mpmng, TileTypeManager *ttmng, std::string id) : Entity(glm::vec3(0), glm::vec3(0), glm::vec2(0), glm::vec3(0) / 2.f, true)
 {
 
 

@@ -16,6 +16,11 @@ void ResourceManager::initResources()
 	ttmng = new TileTypeManager("res/txt/tiles.txt");
 	mmng = new MapManager("res/txt/map1.txt", ttmng);
 
+	std::string playerCharSpriteSheet = "res/txt/gingerman.txt";
+
+	ssmng = new SpriteSheetManager(playerCharSpriteSheet);
+	
+
 }
 
 TextImageManager* ResourceManager::getTextImageManager()
@@ -37,4 +42,9 @@ TileTypeManager* ResourceManager::getTileTypeManager()
 MapManager* ResourceManager::getMapManager()
 {
 	return mmng;
+}
+
+SpriteSheetManager* ResourceManager::getSpriteSheetManager()
+{
+	return ssmng;
 }

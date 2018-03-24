@@ -106,14 +106,14 @@ bool MapManager::loadMapData(std::string filePath, TileTypeManager* tileTypeMana
 		rMaps.push_back(roomTemplates[roomID]);
 		
 
-		printf("Map data loaded");
+		printf("Map data loaded. \n");
 
 		return true;
 	}
 	else 
 	{
 		//Error
-		printf("Unable to open map file : %s", filePath);
+		printf("Unable to open map file : %s \n", filePath);
 		return false;
 	}
 }

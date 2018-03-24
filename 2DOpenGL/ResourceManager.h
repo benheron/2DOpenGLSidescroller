@@ -2,6 +2,7 @@
 #include "text/TextImageManager.h"
 #include "levelManagement/TileTypeManager.h"
 #include "levelManagement/MapManager.h"
+#include "Animation/SpriteSheetManager.h"
 
 #include "Keyboard.h"
 
@@ -22,7 +23,7 @@ public:
 
 	MapManager* getMapManager();
 
-
+	SpriteSheetManager* getSpriteSheetManager();
 
 protected:
 
@@ -30,5 +31,8 @@ protected:
 	TextImageManager* timg;
 	KeyboardManager* km;
 	MapManager* mmng;
+	SpriteSheetManager* ssmng;
+
+
 
 };

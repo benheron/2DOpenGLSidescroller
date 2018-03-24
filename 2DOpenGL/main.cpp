@@ -139,7 +139,7 @@ int main( int argc, char* args[] )
 	int x = 0, y = 0;
 	SDL_GetMouseState(&x, &y);
 
-	Text *fr = new Text(glm::vec3(10.f, 550.f, 0), "arial", 32, "000000000000", rm->getTextImageManager());
+	Text *fr = new Text(glm::vec3(10.f, 550.f, 0), "arial", 32, "000", rm->getTextImageManager());
 
 
 	unsigned int lastTime = SDL_GetTicks();
@@ -182,7 +182,7 @@ int main( int argc, char* args[] )
 		{
 			std::string str = std::to_string(frames);
 			fr->changeTextEnd(str);
-			//printf("FPS: %i", frames);
+			//printf("FPS: %i\n", frames);
 		}
 
 		//tests for framerate problem
