@@ -23,35 +23,95 @@ public:
 
 	virtual ~Entity();
 
+
+	/**
+	@brief Initialise entity variables
+	*/
 	void init();
 
+	/**
+	@brief Update Entity positions
+	@param dt Delta time - time in milliseconds from last frame
+	*/
 	virtual void update(float dt);
 
+	/**
+	@brief Update the model matrix to the current positions, rotations and scales
+	*/
 	void updateModelMatrix();
 
+	/**
+	@brief Update the bounding box matrix used for collision
+	*/
 	void updateBoundingBoxMatrix();
 
+
+	/**
+	@brief
+	*/
 	void setVelocity(glm::vec3 v, bool add = false);
+
+	/**
+	@brief
+	*/
 	glm::vec3 getVelocity() { return velocity; }
 
+	/**
+	@brief
+	*/
 	void setAcceleration(glm::vec3 a, bool add = false);
+
+	/**
+	@brief
+	*/
 	glm::vec3 getAcceleration() { return acceleration; }
 
-
+	/**
+	@brief
+	*/
 	void setModel(Model *m);
 
+	/**
+	@brief
+	*/
 	Model* getModel();
 
+	/**
+	@brief
+	*/
 	std::vector<Model*> getModels() { return entModels; }
 
+	/**
+	@brief
+	*/
 	void setPosition(glm::vec3 p, bool add = false);
 
+	/**
+	@brief
+	*/
+	void setCentre(glm::vec3 p);
+
+	/**
+	@brief
+	*/
 	GLuint getTextureUVBuffer();
 
+	/**
+	@brief
+	*/
 	virtual glm::vec2 getTextureUVOffset();
 
 
+	/**
+	@brief Gets the Entity position
+	@returns The Entity's position
+	*/
 	glm::vec3 getPosition();
+
+	/**
+	@brief Gets the position in the centre of 
+	@returns The centre position of the Entity
+	*/
 
 	glm::vec3 getCentrePosition();
 
@@ -88,29 +148,47 @@ public:
 
 	glm::mat4 getModelMatrix();
 
-
+	virtual glm::mat4 getModelMatrix(int index);
 
 
 	std::vector<glm::vec2> getEntityVertices();
 	virtual std::vector<glm::vec2> getEntityUVs() { return UVs; }
 
-
+	/**
+	@brief Sets the blend colour to apply to the texture
+	@param bc The blend Colour to apply to the texture
+	*/
 	void setBlendColour(glm::vec4 bc) { blendColour = bc; }
 
 
-
+	/**
+	@brief Get the blend colour to apply to the texture
+	@returns A vec4 for RGBA of the blend colour
+	*/
 	glm::vec4 getBlendColour() { return blendColour; }
 
+	/**
+	@brief
+	*/
 	BoundingBox *getBoundingBox();
 
-
+	/**
+	@brief Sets value of should the entity render
+	@param r True or false to render or not
+	*/
 	void setShouldRender(bool r) { shouldRender = r; }
 
+	/**
+	@brief Gets the value of if the entity should render
+	@returns If the entity should render
+	*/
 	bool getShouldRender() { return shouldRender; }
 
 
-	
-	
+	/**
+	@brief Add a texture to the texture list
+	*/
+	void addTextrure(Texture* t);
 	
 
 
@@ -119,9 +197,10 @@ protected:
 	void setQuadVertices(std::vector<glm::vec2> &vertices);
 	void setQuadUVs(std::vector<glm::vec2> &UVs);
 
-	//void setVec3(glm::vec3 &v, glm::vec3 changeV, bool add);
-
 	bool modelMatChanged;
+
+
+	std::vector<Entity*> children;
 
 	std::vector<Model*> entModels;
 	std::vector<Texture*> entTextures;
@@ -174,6 +253,7 @@ protected:
 	///The entity's bounding box - used for collision
 	BoundingBox *bb;
 
+	glm::vec2 uvPos;
 
 	glm::vec2 uvSize;
 

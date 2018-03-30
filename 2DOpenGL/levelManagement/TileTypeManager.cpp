@@ -80,8 +80,17 @@ void TileTypeManager::loadTileData(std::string filePath)
 
 			glm::vec2 tilePos = spriteIndex * spriteDimensions[spritesheetID];
 
-			glm::vec2 uvOffset = tilePos / spriteSheetDimens;
-			glm::vec2 uvDimens = spriteDimensions[spritesheetID] / spriteSheetDimens;
+			glm::vec2 uvOffset = (0.5f +tilePos) / spriteSheetDimens;
+			glm::vec2 uvDimens = (spriteDimensions[spritesheetID]-1.f)/ spriteSheetDimens;
+
+
+
+			//glm::vec2 uvOffset = (2.f*tilePos + 1.f) / (2.f*spriteSheetDimens);
+
+			//stops texture bleeding
+			//forces corodinates to be inside pixel boundaries rather than on the edge
+			//uvOffset += glm::vec2(0.001f, 0.001f);
+			//uvDimens -= glm::vec2(0.002f, 0.002f);
 
 
 			//store the data

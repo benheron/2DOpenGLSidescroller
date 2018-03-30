@@ -12,8 +12,15 @@ Entity::Entity(Texture* entTexture, glm::vec3 pos, glm::vec3 dimens2, glm::vec2 
 
 	if (uvSize == glm::vec2(0))
 	{
-		uvSize.x = dimens.x/entTexture->getOrigDimens().x;
-		uvSize.y = dimens.y/entTexture->getOrigDimens().y;
+		uvSize.x = (dimens.x)/entTexture->getOrigDimens().x;
+		uvSize.y = (dimens.y)/entTexture->getOrigDimens().y;
+
+		//uvPos = 0.5f / entTexture->getOrigDimens();
+		uvPos = glm::vec2(0);
+	}
+	else if(uvSize == glm::vec2(1))
+	{
+		uvPos = glm::vec2(0);
 	}
 
 	container = false;
@@ -38,7 +45,10 @@ Entity::Entity(glm::vec3 pos, glm::vec3 dimens, glm::vec2 uvSize, glm::vec3 offP
 
 Entity::~Entity()
 {
-
+	for (int i = 0; i < entModels.size(); i++)
+	{
+		delete entModels[i];
+	}
 }
 
 
@@ -57,6 +67,7 @@ void Entity::init()
 	modScale = glm::vec3(1.0);
 
 	dimensScale = modScale * glm::vec3(dimens.x/2, dimens.y/2, 0);
+
 
 	if (dimensScale == glm::vec3(0))
 	{
@@ -105,6 +116,8 @@ void Entity::init()
 
 	velocity = glm::vec3(0);
 
+	maxXVel = 0;
+
 }
 
 void Entity::update(float dt)
@@ -134,14 +147,7 @@ void Entity::update(float dt)
 	}
 
 
-	if (velocity.x < 0)
-	{
-		rotYaw = 3.14159265359;
-	}
-	if (velocity.x > 0)
-	{
-		rotYaw = 0;
-	}
+	
 
 
 
@@ -160,9 +166,9 @@ void Entity::updateModelMatrix()
 
 	glm::mat4 mm = glm::mat4(1.0);
 
-	glm::vec3 jointPos = pos +offsetPos;
+	glm::vec3 jointPos = pos + offsetPos;// +glm::vec3(0.001f, 0.001f, 0);
 
-	glm::vec3 roundPos = glm::vec3(round(pos.x), round(pos.y), 0);
+	glm::vec3 roundPos = glm::vec3(round(jointPos.x), round(jointPos.y), 0);
 
 	//glm::vec3 nPos = glm::vec3(round(jointPos.x), round(jointPos.y), round(jointPos.z));
 
@@ -174,7 +180,7 @@ void Entity::updateModelMatrix()
 
 	//translate to new position
 	//use joint position as this is for rendering
-	mm = glm::translate(mm, jointPos);
+	mm = glm::translate(mm, roundPos);
 
 	//rotate x
 	mm = glm::rotate(mm, rotPitch, glm::vec3(1, 0, 0));
@@ -269,9 +275,9 @@ void Entity::setQuadUVs(std::vector<glm::vec2> &UVs)
 {
 
 
-	glm::vec2 topLeftUV = glm::vec2(0.0f, 0.0f);
-	glm::vec2 botLeftUV = glm::vec2(0.0f, uvSize.y);
-	glm::vec2 topRightUV = glm::vec2(uvSize.x, 0.0f);
+	glm::vec2 topLeftUV = glm::vec2(uvPos.x, uvPos.y);
+	glm::vec2 botLeftUV = glm::vec2(uvPos.x, uvSize.y);
+	glm::vec2 topRightUV = glm::vec2(uvSize.x, uvPos.y);
 	glm::vec2 botRightUV = glm::vec2(uvSize.x, uvSize.y);
 
 
@@ -326,6 +332,19 @@ void Entity::setPosition(glm::vec3 p, bool add)
 	updateBoundingBoxMatrix();
 
 	modelMatChanged = true;
+
+
+	for (int i = 0; i < children.size(); i++)
+	{
+		children[i]->setPosition(p, add);
+	}
+}
+
+void Entity::setCentre(glm::vec3 p)
+{
+	pos = p - (dimens / 2.f);
+	updateModelMatrix();
+	updateBoundingBoxMatrix();
 }
 
 
@@ -339,6 +358,12 @@ void Entity::setYaw(float rot, bool add)
 		rotYaw = rot;
 	}
 	modelMatChanged = true;
+
+
+	for (int i = 0; i < children.size(); i++)
+	{
+		children[i]->setYaw(rot, add);
+	}
 }
 
 void Entity::setPitch(float rot, bool add)
@@ -351,6 +376,10 @@ void Entity::setPitch(float rot, bool add)
 		rotPitch = rot;
 	}
 	modelMatChanged = true;
+	for (int i = 0; i < children.size(); i++)
+	{
+		children[i]->setYaw(rot, add);
+	}
 }
 
 void Entity::setRoll(float rot, bool add)
@@ -363,6 +392,10 @@ void Entity::setRoll(float rot, bool add)
 		rotRoll = rot;
 	}
 	modelMatChanged = true;
+	for (int i = 0; i < children.size(); i++)
+	{
+		children[i]->setYaw(rot, add);
+	}
 }
 
 
@@ -384,6 +417,11 @@ Model* Entity::getModel()
 	return model;
 }
 
+void Entity::addTextrure(Texture* t)
+{
+	entTextures.push_back(t);
+}
+
 void Entity::setTexture(Texture *t)
 {
 	entTexture = t;
@@ -397,7 +435,16 @@ Texture *Entity::getTexture()
 
 glm::mat4 Entity::getModelMatrix()
 {
+	return modelMatrix;
+}
 
+
+glm::mat4 Entity::getModelMatrix(int index)
+{
+	if (children.size() > 0)
+	{
+		return children[index]->getModelMatrix();
+	}
 	return modelMatrix;
 }
 

@@ -76,11 +76,11 @@ void Animation::playAnimation()
 
 void Animation::setFrameRate(int fr)
 {
-	//frameRate = fr;
+	frameRate = fr;
 }
 
 int Animation::getFrameRate()
 {
-	return 30;
+	return frameRate;
 }
 

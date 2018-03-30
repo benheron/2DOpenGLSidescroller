@@ -61,10 +61,10 @@ void Actor::actorInit()
 
 	currentAnimation->setAnimationType(atype);
 	currentAnimation->playAnimation();
-	dimens = glm::vec3(currentAnimation->getCurrentFrame()->getFrameDimens(), 0) * glm::vec3(actorSpriteSheet->getTexture()->getOrigDimens(), 0);
+	//dimens = glm::vec3(currentAnimation->getCurrentFrame()->getFrameDimens(), 0) * glm::vec3(actorSpriteSheet->getTexture()->getOrigDimens(), 0);
 
 
-	dimensScale = glm::vec3(1.0) * glm::vec3(dimens.x / 2, dimens.y / 2, 0);
+//	dimensScale = glm::vec3(1.0) * glm::vec3(dimens.x / 2, dimens.y / 2, 0);
 }
 
 
@@ -86,6 +86,15 @@ void Actor::update(float dt)
 		velocity.y > -0.01)
 	{
 		velocity.y = 0;
+	}
+
+	if (velocity.x < 0)
+	{
+		rotYaw = 3.14159265359;
+	}
+	if (velocity.x > 0)
+	{
+		rotYaw = 0;
 	}
 
 
@@ -110,10 +119,12 @@ void Actor::update(float dt)
 		
 	}
 
+
+
 	if (alive)
 	{
 		if (onFloor) {
-			if (abs(velocity.x) > 0.01)
+			if (abs(velocity.x) > 0.01f)
 			{
 				aState = movingState;
 			}
@@ -123,7 +134,14 @@ void Actor::update(float dt)
 			//velocity *= 0.98f;
 		}
 		else {
-			aState = jumpingState;
+			if (velocity.y > 0.01f)
+			{
+				aState = fallingState;
+			}
+			else {
+				aState = jumpingState;
+			}
+			
 		}
 	}
 	else {
@@ -147,15 +165,24 @@ void Actor::update(float dt)
 		case jumpingState:
 			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("J"));
 			break;
+		case fallingState:
+			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("F"));
+			break;
 		}
 
-		if (changeAnimation)
-		{
-			currentAnimation->setAnimationType(actorSpriteSheet->getAnimationType("J"));
-			currentAnimation->playAnimation();
-			changeAnimation = false;
-		}
+		
 	}
+
+	
+
+	int newAniFR = (abs(velocity.x) / 200) * 20;
+	if (newAniFR < 5)
+	{
+		newAniFR = 5;
+	}
+
+
+	currentAnimation->setFrameRate(newAniFR);
 	
 	currentAnimation->update(dt);
 
@@ -231,14 +258,14 @@ void Actor::moveLeft(float dt)
 
 void Actor::moveDown(float dt)
 {
-	acceleration.y += speed * dt;
+	velocity.y += speed * dt;
 
 	modelMatChanged = true;
 }
 
 void Actor::moveUp(float dt)
 {
-	acceleration.y -= speed * dt;
+	velocity.y -= speed * dt;
 
 	modelMatChanged = true;
 }
@@ -246,7 +273,7 @@ void Actor::moveUp(float dt)
 
 void Actor::jump(float dt)
 {
-	velocity.y -= 260.f;
+	velocity.y -= 270.f;
 	printf("Jump\n");
 }
 

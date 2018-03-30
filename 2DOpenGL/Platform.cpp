@@ -15,7 +15,7 @@ Platform::~Platform()
 
 bool Platform::init()
 {
-	
+	renderSize = glm::vec2(1024.f, 576.f);
 
 	bool success = true;
 
@@ -82,7 +82,13 @@ glm::vec2 Platform::getWindowSize()
 	return sizeWindow;
 }
 
+glm::vec2 Platform::getRenderSize()
+{
+	return renderSize;
+}
+
 SDL_Window* Platform::getWindow()
 {
 	return window;
 }
+

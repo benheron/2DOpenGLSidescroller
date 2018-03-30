@@ -9,7 +9,8 @@ enum ActorState
 	movingState,
 	jumpingState,
 	climbingState,
-	deadState
+	deadState,
+	fallingState
 };
 
 class Actor : public WorldObject

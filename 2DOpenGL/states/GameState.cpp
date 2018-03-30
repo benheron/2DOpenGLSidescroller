@@ -59,6 +59,19 @@ void GameState::update(float dt)
 		
 	}
 
+
+	if (km->keyDown("up"))
+	{
+		camera->setScale(glm::vec3(2.f*dt, 2.f*dt, 0), true);
+
+	}
+
+	if (km->keyDown("down"))
+	{
+		camera->setScale(glm::vec3(-2.f*dt, -2.f*dt, 0), true);
+
+	}
+
 	if (!km->keyDown("a") &&
 		!km->keyDown("d"))
 	{
@@ -125,15 +138,57 @@ void GameState::update(float dt)
 	if (!playerCollidedWithTile)
 	{
 		int f = 0;
-	//	printf("Player feet position y: %f after collision \n", (e1->getPosition().y + e1->getDimensions().y));
+		//printf("Player feet position y: %f after collision \n", (e1->getPosition().y + e1->getDimensions().y));
 	}
 	if (cameraFollow)
 	{
-		camera->setPosition(e1->getCentrePosition() * glm::vec3(-1), false);
-		camera->setPosition(glm::vec3(platform->getWindowSize() / 2.f * glm::vec2(1), 0), true);
+		//camera->setPosition(e1->getCentrePosition() * glm::vec3(-1.f), false);
+		//camera->setPosition(glm::vec3(platform->getRenderSize() / 2.f, 0), true);
+
+
+		glm::vec3 camPos = (e1->getCentrePosition()) - glm::vec3(platform->getRenderSize() / 2.f, 0);
+		glm::vec2 camDim = camera->getDimensions();
+
+		//printf("Camera dimensions: X: %f, Y: %f \n", camDim.x, camDim.y);
+
+
+		if (camPos.x < 0)
+		{
+			camPos.x = 0;
+		}
+		if ((camPos.x + camDim.x) > mn->getDimensions().x )
+		{
+			camPos.x = mn->getDimensions().x - camDim.x;
+		}
+
+
+		if (camPos.y < 0)
+		{
+			camPos.y = 0;
+		}
+		if ((camPos.y + camDim.y) > mn->getDimensions().y)
+		{
+			camPos.y = mn->getDimensions().y - camDim.y;
+			
+		}
+		camPos *= glm::vec3(-1.f) ;
+
+		camera->setPosition(camPos);
+
+
+
+		//camera->setOrigin(e1->getCentrePosition() * glm::vec3(-1.f));
+		//printf("Camera position x: %f, y: %f \n", camera->getPosition().x, camera->getPosition().y);
+
+
+		camPos = glm::vec3(round(camPos.x), round(camPos.y), 0);
+
+
+		bg->update(dt, camPos);
+
 	}
 
-	glm::vec3 cameraChange = e1->getCentrePosition() * glm::vec3(-1) + glm::vec3(platform->getWindowSize() / 2.f, 0);
+	//glm::vec3 cameraChange = e1->getCentrePosition() * glm::vec3(-1) + glm::vec3(platform->getWindowSize() / 2.f, 0);
 
 
 
@@ -165,9 +220,20 @@ void GameState::load()
 	timings = 0;
 	hasMoved = false;
 	lastVel = 0;
+	
+	camera->setDimensions(platform->getRenderSize());
+
+
+
+	
+
 
 	mn = new MapRoom(rm->getMapManager(), rm->getTileTypeManager(), "M01");
  
+
+	bg = new Background(rm->getBackgroundManager()->getBackgroundsByID("Grassland"), mn->getDimensions());
+
+	entities.push_back(bg);
 	entities.push_back(mn);
 
 	std::vector<Entity*> mnb = mn->getTilesEntities("B");

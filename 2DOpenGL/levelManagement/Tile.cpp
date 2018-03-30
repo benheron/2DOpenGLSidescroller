@@ -2,7 +2,7 @@
 
 
 
-Tile::Tile(glm::vec3 pos, glm::vec3 dimensions, TileType *tileType) : WorldObject(pos, dimensions, tileType->getSpriteDimensions()), tileType(tileType)
+Tile::Tile(glm::vec3 pos, glm::vec3 dimensions, TileType *tileType) : WorldObject(pos, dimensions/*, tileType->getSpriteDimensions()*/), tileType(tileType)
 {
 
 	tileInit();

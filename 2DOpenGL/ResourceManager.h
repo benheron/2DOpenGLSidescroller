@@ -3,6 +3,7 @@
 #include "levelManagement/TileTypeManager.h"
 #include "levelManagement/MapManager.h"
 #include "Animation/SpriteSheetManager.h"
+#include "Background/BackgroundManager.h"
 
 #include "Keyboard.h"
 
@@ -25,6 +26,8 @@ public:
 
 	SpriteSheetManager* getSpriteSheetManager();
 
+	BackgroundManager* getBackgroundManager();
+
 protected:
 
 	TileTypeManager* ttmng;
@@ -32,6 +35,8 @@ protected:
 	KeyboardManager* km;
 	MapManager* mmng;
 	SpriteSheetManager* ssmng;
+
+	BackgroundManager* bgmng;
 
 
 

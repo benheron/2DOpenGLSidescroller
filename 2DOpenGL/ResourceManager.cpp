@@ -20,7 +20,7 @@ void ResourceManager::initResources()
 
 	ssmng = new SpriteSheetManager(playerCharSpriteSheet);
 	
-
+	bgmng = new BackgroundManager("res/txt/backgrounds.txt");
 }
 
 TextImageManager* ResourceManager::getTextImageManager()
@@ -47,4 +47,9 @@ MapManager* ResourceManager::getMapManager()
 SpriteSheetManager* ResourceManager::getSpriteSheetManager()
 {
 	return ssmng;
+}
+
+BackgroundManager* ResourceManager::getBackgroundManager()
+{
+	return bgmng;
 }

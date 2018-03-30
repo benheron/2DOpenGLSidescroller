@@ -166,6 +166,12 @@ void MapRoom::createRoom(MapManager *mpmng, TileTypeManager *ttmng)
 
 	}
 
+
+
+	dimens.x = roomTiles["O"][0].size() * tileSize.x;
+	dimens.y = roomTiles["O"].size() * tileSize.y;
+
+
 	labelTileSides();
 
 	
@@ -468,7 +474,7 @@ bool MapRoom::collideWithTile(Actor* e, float dt)
 							//there is a tile underneath
 							if (onFloor)
 							{
-								e->setBlendColour(glm::vec4(.0f, 1.0f, .0f, 1.0f));
+								//e->setBlendColour(glm::vec4(.0f, 1.0f, .0f, 1.0f));
 								e->setOnFloor(true);
 								if (!usedFriction)
 								{
@@ -479,7 +485,7 @@ bool MapRoom::collideWithTile(Actor* e, float dt)
 								
 
 							} else {
-								e->setBlendColour(blendCol);
+								//e->setBlendColour(blendCol);
 							}
 							
 						}

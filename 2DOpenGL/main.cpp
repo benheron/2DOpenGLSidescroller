@@ -114,7 +114,7 @@ void close()
 int main( int argc, char* args[] )
 {
 
-	Platform *platform = new Platform("OpenGL project!", glm::vec2(1024, 576));
+	Platform *platform = new Platform("OpenGL project!", glm::vec2(1024.f, 576.f));
 
 
 	srand(time(NULL));
@@ -223,7 +223,7 @@ int main( int argc, char* args[] )
 
 
 		renderer->render(stateManager->getStates());
-		renderer->renderFrameRate(fr);
+		//renderer->renderFrameRate(fr);
 			
 		//Update screen
 		SDL_GL_SwapWindow( platform->getWindow() );

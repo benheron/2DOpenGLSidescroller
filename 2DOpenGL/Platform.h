@@ -19,6 +19,8 @@ public:
 
 	glm::vec2 getWindowSize();
 
+	glm::vec2 getRenderSize();
+
 	SDL_Window* getWindow();
 
 protected:
@@ -27,6 +29,8 @@ protected:
 
 	std::string windowName;
 	glm::vec2 sizeWindow;
+
+	glm::vec2 renderSize;
 
 	SDL_Window* window = NULL;
 	SDL_GLContext context;

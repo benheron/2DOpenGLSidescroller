@@ -6,6 +6,7 @@
 #include "../Collision.h"
 #include "../levelManagement/MapRoom.h"
 #include "../entities/Actor.h"
+#include "../Background/Background.h"
 
 class GameOverState;
 
@@ -50,6 +51,9 @@ protected:
 
 
 	MapRoom *mn;
+
+
+	Background *bg;
 
 	ResourceManager* rm;
 

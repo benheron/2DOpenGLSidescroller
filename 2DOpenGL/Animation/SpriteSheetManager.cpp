@@ -58,8 +58,21 @@ void SpriteSheetManager::loadSpriteSheet(std::string filePath)
 				spriteSheetData >> frameDimens.y;
 
 
-				glm::vec2 uvOffset = framePos / spriteSheetTexture->getOrigDimens();
-				glm::vec2 uvDimens = frameDimens / spriteSheetTexture->getOrigDimens();;
+				glm::vec2 endFramePos = framePos + frameDimens;
+
+
+				glm::vec2 uvOffset = (framePos) / spriteSheetTexture->getOrigDimens();
+				glm::vec2 uvDimens = (frameDimens) / spriteSheetTexture->getOrigDimens();
+
+				
+
+
+
+
+				//stops texture bleeding
+				//forces corodinates to be inside pixel boundaries rather than on the edge
+				//uvOffset += glm::vec2(0.0001f, 0.0001f);
+			//	uvDimens -= glm::vec2(0.0002f, 0.0002f);
 
 
 

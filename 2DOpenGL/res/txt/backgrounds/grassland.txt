@@ -1,0 +1,4 @@
+3
+res/img/sky3.png
+res/img/clouds.png
+res/img/mountains.png
